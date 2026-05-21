@@ -1,0 +1,57 @@
+@import "tailwindcss";
+
+@theme inline {
+  --font-sans: var(--font-inter), ui-sans-serif, system-ui, sans-serif;
+  --font-serif: var(--font-playfair), ui-serif, Georgia, 'Times New Roman', serif;
+  --color-brand: #d97706;
+  --color-brand-dark: #b45309;
+  --color-brand-light: #fef3c7;
+  --color-chocolate: #7c2d12;
+  --color-cream: #fffbeb;
+}
+
+@layer base {
+  * {
+    box-sizing: border-box;
+  }
+
+  html {
+    scroll-behavior: smooth;
+  }
+
+  body {
+    background-color: #fffbeb;
+    color: #1c1917;
+    -webkit-font-smoothing: antialiased;
+  }
+}
+
+@layer utilities {
+  .font-display {
+    font-family: var(--font-playfair), ui-serif, Georgia, serif;
+  }
+
+  .text-gradient-gold {
+    background: linear-gradient(135deg, #C27A1A, #9A3412, #7C2D12);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    background-clip: text;
+  }
+
+  .hero-gradient {
+    background: linear-gradient(135deg, #1A0800 0%, #7C2D12 35%, #9A3412 65%, #C27A1A 100%);
+  }
+
+  .text-warm-gold {
+    color: #D4941A;
+  }
+
+  .card-hover {
+    transition: transform 0.25s ease, box-shadow 0.25s ease;
+  }
+
+  .card-hover:hover {
+    transform: translateY(-6px);
+    box-shadow: 0 24px 48px -12px rgba(180, 83, 9, 0.3);
+  }
+}
