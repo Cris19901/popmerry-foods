@@ -14,7 +14,7 @@ export default async function AdminCustomOrdersPage() {
   const orders = await getCustomOrders();
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       <div className="mb-8">
         <h1 className="font-display text-2xl font-bold text-stone-900">Custom Orders</h1>
         <p className="text-stone-500 text-sm mt-1">{orders.length} custom order requests</p>

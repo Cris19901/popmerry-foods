@@ -22,7 +22,7 @@ export default async function AdminOrdersPage() {
   const orders = await getOrders();
 
   return (
-    <div className="p-8">
+    <div className="p-4 sm:p-8">
       <div className="mb-8">
         <h1 className="font-display text-2xl font-bold text-stone-900">Orders</h1>
         <p className="text-stone-500 text-sm mt-1">{orders.length} total orders</p>
