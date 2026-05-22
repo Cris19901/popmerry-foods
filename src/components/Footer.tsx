@@ -16,7 +16,7 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-3 mt-5">
               <a
-                href="https://wa.me/234XXXXXXXXXX"
+                href="https://wa.me/2347039571698"
                 className="bg-green-600 hover:bg-green-500 text-white text-xs font-semibold px-4 py-2 rounded-full transition-colors"
               >
                 WhatsApp Us
@@ -49,8 +49,8 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-stone-400">
               <li>
                 <span className="block text-stone-500 text-xs mb-0.5">Phone / WhatsApp</span>
-                <a href="tel:+234XXXXXXXXXX" className="hover:text-amber-400 transition-colors">
-                  +234 XXX XXX XXXX
+                <a href="tel:+2347039571698" className="hover:text-amber-400 transition-colors">
+                  07039571698
                 </a>
               </li>
               <li>
