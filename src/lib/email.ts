@@ -3,7 +3,7 @@ import { formatPrice } from './products-data';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM = 'PopMerry Foods <orders@popmerryfoods.com>';
+const FROM = 'PopMerry Foods <onboarding@resend.dev>';
 const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'hello@popmerryfoods.com';
 
 interface OrderEmailData {
