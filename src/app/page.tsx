@@ -23,7 +23,7 @@ export default async function HomePage() {
         </div>
 
         {/* Hero content */}
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center pt-20 sm:pt-0">
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center mt-16 sm:mt-0">
           <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 text-white/90 text-sm font-medium px-4 py-2 rounded-full mb-8">
             <Sparkles size={14} className="text-warm-gold" />
             Fresh from our kitchen every morning
@@ -185,15 +185,19 @@ export default async function HomePage() {
               className="group relative overflow-hidden rounded-3xl p-8 sm:p-10 flex flex-col justify-end min-h-64 cursor-pointer sm:col-span-2 lg:col-span-1"
             >
               <div
-                className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
-                style={{ background: 'linear-gradient(135deg, #8B6914 0%, #F5D060 60%, #C4851C 100%)' }}
+                className="absolute inset-0"
+                style={{ background: 'radial-gradient(ellipse at 70% 20%, #F5D060 0%, #C4851C 45%, #6B3A0A 75%, #3D1A00 100%)' }}
               />
-              <div className="absolute inset-0 bg-gradient-to-t from-[#3D1A00]/80 via-[#6B3A0A]/40 to-transparent" />
+              {/* Decorative emoji */}
+              <div className="absolute -right-3 -top-3 text-[130px] leading-none select-none opacity-25 rotate-12 transition-transform duration-700 group-hover:rotate-6 group-hover:scale-110 group-hover:opacity-30">
+                🍿
+              </div>
+              <div className="absolute inset-0 bg-gradient-to-t from-[#3D1A00]/85 via-[#3D1A00]/20 to-transparent" />
               <div className="relative z-10">
                 <span className="inline-block bg-white/20 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
                   3 Flavours
                 </span>
-                <h3 className="font-display text-3xl font-bold text-white mb-1">Popcorn 🍿</h3>
+                <h3 className="font-display text-3xl font-bold text-white mb-1">Popcorn</h3>
                 <p className="text-white/80 text-sm">Salted, caramel, spicy — freshly popped and impossible to put down.</p>
                 <div className="flex items-center gap-1 text-white font-semibold text-sm mt-4 group-hover:gap-2 transition-all">
                   Shop now <ArrowRight size={16} />
