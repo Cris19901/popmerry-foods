@@ -1,6 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
-import { ArrowLeft, Star, Clock, Package } from 'lucide-react';
+import { ArrowLeft, Sparkles, Clock, Package } from 'lucide-react';
 import { getProducts, getProduct, formatPrice } from '@/lib/products-db';
 import { FREE_DELIVERY_THRESHOLD } from '@/lib/constants';
 import AddToCartButton from './AddToCartButton';
@@ -55,6 +55,7 @@ export default async function ProductDetailPage({ params }: Props) {
   const categoryLabel =
     product.category === 'banana-cake' ? 'Banana Cakes'
     : product.category === 'croissant' ? 'Croissants'
+    : product.category === 'popcorn' ? 'Popcorn'
     : 'Bundle Deals';
 
   return (
@@ -117,7 +118,7 @@ export default async function ProductDetailPage({ params }: Props) {
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 {[
                   { icon: Clock, title: 'Baked Fresh', body: 'Made the morning of your order — never a day old.' },
-                  { icon: Star, title: 'Premium Quality', body: 'Finest ingredients, zero shortcuts. You taste the difference.' },
+                  { icon: Sparkles, title: 'Premium Quality', body: 'Finest ingredients, zero shortcuts. You taste the difference.' },
                   { icon: Package, title: 'Safe Packaging', body: 'Arrives warm, intact, and exactly as it left our kitchen.' },
                 ].map(({ icon: Icon, title, body }) => (
                   <div key={title} className="bg-white rounded-2xl p-4 border border-amber-100">

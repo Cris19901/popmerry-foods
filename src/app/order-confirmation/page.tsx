@@ -1,6 +1,6 @@
 import { Suspense } from 'react';
 import Link from 'next/link';
-import { CheckCircle, ArrowRight, Phone, ShoppingBag } from 'lucide-react';
+import { CheckCircle, ArrowRight, MessageCircle, ShoppingBag } from 'lucide-react';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { formatPrice } from '@/lib/products-data';
 
@@ -104,7 +104,7 @@ async function ConfirmationContent({ orderId }: { orderId?: string }) {
         </div>
 
         <div className="bg-green-50 border border-green-100 rounded-2xl p-4 flex items-center gap-3 mb-8">
-          <Phone size={20} className="text-green-600 flex-shrink-0" />
+          <MessageCircle size={20} className="text-green-600 flex-shrink-0" />
           <p className="text-sm text-green-800">
             Questions? WhatsApp us at{' '}
             <a href="https://wa.me/234XXXXXXXXXX" className="font-bold underline">

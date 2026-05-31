@@ -9,6 +9,7 @@ const CATEGORIES: { value: 'all' | ProductCategory; label: string }[] = [
   { value: 'all', label: 'All' },
   { value: 'banana-cake', label: 'Banana Cakes' },
   { value: 'croissant', label: 'Croissants' },
+  { value: 'popcorn', label: 'Popcorn' },
   { value: 'bundle', label: 'Bundle Deals' },
 ];
 

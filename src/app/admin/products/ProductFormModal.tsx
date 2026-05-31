@@ -14,6 +14,7 @@ interface Props {
 const CATEGORIES = [
   { value: 'banana-cake', label: 'Banana Cake' },
   { value: 'croissant', label: 'Croissant' },
+  { value: 'popcorn', label: 'Popcorn' },
   { value: 'bundle', label: 'Bundle' },
 ] as const;
 

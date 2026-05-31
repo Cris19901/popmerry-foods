@@ -45,6 +45,7 @@ export default async function AdminCustomOrdersPage() {
                   { label: 'Event Date', value: new Date(order.event_date).toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' }) },
                   { label: 'Cakes', value: order.cake_quantity || '—' },
                   { label: 'Croissants', value: order.croissant_quantity || '—' },
+                  { label: 'Popcorn', value: order.popcorn_quantity || '—' },
                 ].map(({ label, value }) => (
                   <div key={label} className="bg-stone-50 rounded-xl p-3">
                     <p className="text-stone-400 text-xs mb-0.5">{label}</p>

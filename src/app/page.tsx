@@ -1,5 +1,5 @@
 import Link from 'next/link';
-import { ArrowRight, Sparkles, Clock, Star, Package } from 'lucide-react';
+import { ArrowRight, Sparkles, Clock, Star, Package, Flame, Heart } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import { getProducts } from '@/lib/products-db';
 
@@ -37,7 +37,7 @@ export default async function HomePage() {
           </h1>
 
           <p className="text-white/80 text-lg sm:text-xl leading-relaxed max-w-2xl mx-auto mb-10">
-            Handcrafted banana cakes and artisan croissants — made with the finest ingredients, baked with love, delivered warm to your door.
+            Handcrafted banana cakes, artisan croissants, and freshly popped popcorn — made with the finest ingredients, crafted with love, delivered warm to your door.
           </p>
 
           <div className="flex flex-col sm:flex-row items-center justify-center gap-4">
@@ -69,10 +69,10 @@ export default async function HomePage() {
         <div className="max-w-5xl mx-auto px-4 sm:px-6 py-8">
           <div className="grid grid-cols-2 sm:grid-cols-4 gap-6">
             {[
-              { icon: Clock, title: 'Baked Fresh Daily', subtitle: 'Ready by 7am every day' },
-              { icon: Star, title: 'Premium Ingredients', subtitle: 'No shortcuts, ever' },
+              { icon: Flame, title: 'Baked Fresh Daily', subtitle: 'Ready by 7am every day' },
+              { icon: Sparkles, title: 'Premium Ingredients', subtitle: 'No shortcuts, ever' },
               { icon: Package, title: 'Careful Packaging', subtitle: 'Arrives warm and perfect' },
-              { icon: Sparkles, title: 'Made with Love', subtitle: 'You can taste the difference' },
+              { icon: Heart, title: 'Made with Love', subtitle: 'You can taste the difference' },
             ].map(({ icon: Icon, title, subtitle }) => (
               <div key={title} className="flex flex-col items-center text-center gap-2">
                 <div className="w-12 h-12 bg-amber-50 rounded-2xl flex items-center justify-center">
@@ -123,7 +123,7 @@ export default async function HomePage() {
         <div className="max-w-6xl mx-auto">
           <div className="text-center mb-12">
             <h2 className="font-display text-4xl sm:text-5xl font-bold text-stone-900">
-              Two Obsessions,
+              Three Obsessions,
               <br />
               <span className="text-gradient-gold italic">Endless Possibilities</span>
             </h2>
@@ -132,7 +132,7 @@ export default async function HomePage() {
             </p>
           </div>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+          <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-8">
             {/* Banana Cakes */}
             <Link
               href="/products?cat=banana-cake"
@@ -178,6 +178,28 @@ export default async function HomePage() {
                 </div>
               </div>
             </Link>
+
+            {/* Popcorn */}
+            <Link
+              href="/products?cat=popcorn"
+              className="group relative overflow-hidden rounded-3xl p-8 sm:p-10 flex flex-col justify-end min-h-64 cursor-pointer sm:col-span-2 lg:col-span-1"
+            >
+              <div
+                className="absolute inset-0 transition-transform duration-700 group-hover:scale-105"
+                style={{ background: 'linear-gradient(135deg, #8B6914 0%, #F5D060 60%, #C4851C 100%)' }}
+              />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#3D1A00]/80 via-[#6B3A0A]/40 to-transparent" />
+              <div className="relative z-10">
+                <span className="inline-block bg-white/20 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
+                  3 Flavours
+                </span>
+                <h3 className="font-display text-3xl font-bold text-white mb-1">Popcorn 🍿</h3>
+                <p className="text-white/80 text-sm">Salted, caramel, spicy — freshly popped and impossible to put down.</p>
+                <div className="flex items-center gap-1 text-white font-semibold text-sm mt-4 group-hover:gap-2 transition-all">
+                  Shop now <ArrowRight size={16} />
+                </div>
+              </div>
+            </Link>
           </div>
         </div>
       </section>
@@ -194,7 +216,7 @@ export default async function HomePage() {
             Planning a Celebration?
           </h2>
           <p className="text-stone-400 text-lg leading-relaxed mb-8">
-            Birthdays, weddings, baby showers, corporate events — we create custom cakes and croissant trays tailored exactly to your vision and quantity.
+            Birthdays, weddings, baby showers, corporate events — we create custom cakes, croissant trays, and popcorn packs tailored exactly to your vision and quantity.
           </p>
           <Link
             href="/custom-order"

@@ -1,7 +1,7 @@
 'use client';
 
 import { useState } from 'react';
-import { ShoppingCart, Zap, X, Plus, Minus } from 'lucide-react';
+import { ShoppingCart, Flame, X, Plus, Minus } from 'lucide-react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 import { Product } from '@/types';
@@ -86,7 +86,7 @@ export default function AddToCartButton({ product }: { product: Product }) {
           onClick={handleBuyNow}
           className="w-full flex items-center justify-center gap-2 bg-amber-700 hover:bg-amber-800 text-white font-bold py-3.5 rounded-full transition-all hover:shadow-lg hover:shadow-amber-200 hover:-translate-y-0.5 active:translate-y-0 text-sm"
         >
-          <Zap size={17} />
+          <Flame size={17} />
           Buy Now
         </button>
 

@@ -1,4 +1,4 @@
-export type ProductCategory = 'banana-cake' | 'croissant' | 'bundle';
+export type ProductCategory = 'banana-cake' | 'croissant' | 'bundle' | 'popcorn';
 
 export interface Product {
   id: string;
@@ -47,5 +47,6 @@ export interface CustomOrderRequest {
   eventDate: string;
   cakeQuantity: string;
   croissantQuantity: string;
+  popcornQuantity: string;
   specialRequirements: string;
 }

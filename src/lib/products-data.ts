@@ -154,6 +154,45 @@ export const products: Product[] = [
     isAvailable: true,
   },
 
+  // --- POPCORN ---
+  {
+    id: 'pc-classic',
+    name: 'Classic Salted Popcorn',
+    description: 'Light, airy, and perfectly seasoned with just the right touch of salt. The ideal snack for any occasion.',
+    price: 500,
+    category: 'popcorn',
+    emoji: '🍿',
+    imageId: '',
+    gradientFrom: '#8B6914',
+    gradientTo: '#F5D060',
+    tag: 'New',
+    isAvailable: true,
+  },
+  {
+    id: 'pc-caramel',
+    name: 'Caramel Popcorn',
+    description: 'Golden caramel-coated kernels with a satisfying crunch. Sweet, buttery, and absolutely addictive.',
+    price: 600,
+    category: 'popcorn',
+    emoji: '🍯',
+    imageId: '',
+    gradientFrom: '#6B3A0A',
+    gradientTo: '#C4851C',
+    isAvailable: true,
+  },
+  {
+    id: 'pc-spicy',
+    name: 'Spicy Pepper Popcorn',
+    description: 'A bold kick of chilli and spice on every kernel. For those who like it fiery.',
+    price: 550,
+    category: 'popcorn',
+    emoji: '🌶️',
+    imageId: '',
+    gradientFrom: '#7C1400',
+    gradientTo: '#D4340A',
+    isAvailable: true,
+  },
+
   // --- BUNDLES ---
   {
     id: 'bn-morning',

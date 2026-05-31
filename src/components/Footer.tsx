@@ -12,7 +12,7 @@ export default function Footer() {
               <span className="font-display text-xl font-bold text-amber-400">PopMerry Foods</span>
             </div>
             <p className="text-stone-400 text-sm leading-relaxed max-w-xs">
-              Handcrafted banana cakes and artisan croissants made fresh daily. Every bite tells a story of warmth, love, and the very best ingredients.
+              Handcrafted banana cakes, artisan croissants, and freshly popped popcorn made daily. Every bite tells a story of warmth, love, and the very best ingredients.
             </p>
             <div className="flex items-center gap-3 mt-5">
               <a
@@ -31,6 +31,7 @@ export default function Footer() {
               {[
                 { href: '/products?cat=banana-cake', label: 'Banana Cakes' },
                 { href: '/products?cat=croissant', label: 'Croissants' },
+                { href: '/products?cat=popcorn', label: 'Popcorn' },
                 { href: '/products?cat=bundle', label: 'Bundle Deals' },
                 { href: '/custom-order', label: 'Custom Orders' },
               ].map(({ href, label }) => (

@@ -17,6 +17,7 @@ interface Props {
 const CATEGORY_LABELS: Record<string, string> = {
   'banana-cake': 'Banana Cake',
   croissant: 'Croissant',
+  popcorn: 'Popcorn',
   bundle: 'Bundle',
 };
 
@@ -72,7 +73,7 @@ export default function ProductsAdminClient({ products, dbReady }: Props) {
       )}
 
       {/* Header row */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-start justify-between gap-3 mb-6">
         <div>
           <h1 className="font-display text-2xl font-bold text-stone-900">Products</h1>
           <p className="text-stone-500 text-sm mt-0.5">
@@ -86,12 +87,12 @@ export default function ProductsAdminClient({ products, dbReady }: Props) {
             )}
           </p>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-2 flex-shrink-0">
           {dbReady && products.length > 0 && (
             <button
               onClick={handleSeed}
               disabled={seeding}
-              className="text-xs text-stone-500 hover:text-stone-800 border border-stone-200 px-3 py-1.5 rounded-full transition-colors"
+              className="hidden sm:block text-xs text-stone-500 hover:text-stone-800 border border-stone-200 px-3 py-1.5 rounded-full transition-colors"
             >
               {seeding ? 'Syncing…' : 'Re-seed from code'}
             </button>
@@ -102,7 +103,8 @@ export default function ProductsAdminClient({ products, dbReady }: Props) {
               className="inline-flex items-center gap-2 bg-amber-700 hover:bg-amber-800 text-white text-sm font-semibold px-4 py-2 rounded-full transition-colors"
             >
               <Plus size={15} />
-              Add Product
+              <span className="hidden sm:inline">Add Product</span>
+              <span className="sm:hidden">Add</span>
             </button>
           )}
         </div>
@@ -110,7 +112,60 @@ export default function ProductsAdminClient({ products, dbReady }: Props) {
 
       {/* Table */}
       <div className="bg-white rounded-2xl border border-stone-200 overflow-hidden">
-        <table className="w-full text-sm">
+        {/* Mobile cards */}
+        <div className="sm:hidden divide-y divide-stone-100">
+          {products.map(product => (
+            <div key={product.id} className="p-4 flex items-center gap-3">
+              <div
+                className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0"
+                style={{ background: `linear-gradient(135deg, ${product.gradientFrom}, ${product.gradientTo})` }}
+              >
+                {product.imageId && (
+                  <img
+                    src={`https://images.unsplash.com/photo-${product.imageId}?auto=format&fit=crop&w=48&h=48&q=70`}
+                    alt={product.name}
+                    className="w-full h-full object-cover"
+                  />
+                )}
+              </div>
+              <div className="flex-1 min-w-0">
+                <p className="font-medium text-stone-900 text-sm truncate">{product.name}</p>
+                <div className="flex items-center gap-2 mt-0.5 flex-wrap">
+                  <span className="text-stone-400 text-xs">{CATEGORY_LABELS[product.category]}</span>
+                  {product.tag && (
+                    <span className="text-xs font-semibold bg-amber-50 text-amber-700 px-2 py-0.5 rounded-full">{product.tag}</span>
+                  )}
+                </div>
+                <p className="font-semibold text-stone-900 text-sm mt-1">{formatPrice(product.price)}</p>
+              </div>
+              <div className="flex flex-col items-end gap-2 flex-shrink-0">
+                <AvailabilityToggle productId={product.id} isAvailable={product.isAvailable} />
+                {dbReady && (
+                  <div className="flex items-center gap-1">
+                    <button
+                      onClick={() => setModal(product)}
+                      className="p-1.5 text-stone-400 hover:text-amber-700 hover:bg-amber-50 rounded-lg transition-colors"
+                      title="Edit product"
+                    >
+                      <Pencil size={14} />
+                    </button>
+                    <button
+                      onClick={() => handleDelete(product)}
+                      disabled={deletingId === product.id}
+                      className="p-1.5 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors disabled:opacity-50"
+                      title="Delete product"
+                    >
+                      <Trash2 size={14} />
+                    </button>
+                  </div>
+                )}
+              </div>
+            </div>
+          ))}
+        </div>
+
+        {/* Desktop table */}
+        <table className="hidden sm:table w-full text-sm">
           <thead className="bg-stone-50 border-b border-stone-200">
             <tr>
               {['Product', 'Category', 'Price', 'Tag', 'Available', ''].map(h => (

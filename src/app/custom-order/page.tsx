@@ -22,6 +22,7 @@ export default function CustomOrderPage() {
     eventDate: '',
     cakeQuantity: '',
     croissantQuantity: '',
+    popcornQuantity: '',
     specialRequirements: '',
   });
 
@@ -143,10 +144,10 @@ export default function CustomOrderPage() {
             </div>
 
             {/* Quantities */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
               <div>
                 <label className="block text-sm font-semibold text-stone-700 mb-1.5">
-                  Banana Cake Quantity
+                  Banana Cakes
                   <span className="text-stone-400 font-normal"> (optional)</span>
                 </label>
                 <input
@@ -157,12 +158,23 @@ export default function CustomOrderPage() {
               </div>
               <div>
                 <label className="block text-sm font-semibold text-stone-700 mb-1.5">
-                  Croissant Quantity
+                  Croissants
                   <span className="text-stone-400 font-normal"> (optional)</span>
                 </label>
                 <input
                   name="croissantQuantity" value={form.croissantQuantity} onChange={handleChange}
                   placeholder="e.g. 24 assorted"
+                  className="w-full border border-stone-200 rounded-xl px-4 py-3 text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                />
+              </div>
+              <div>
+                <label className="block text-sm font-semibold text-stone-700 mb-1.5">
+                  Popcorn
+                  <span className="text-stone-400 font-normal"> (optional)</span>
+                </label>
+                <input
+                  name="popcornQuantity" value={form.popcornQuantity} onChange={handleChange}
+                  placeholder="e.g. 10 bags"
                   className="w-full border border-stone-200 rounded-xl px-4 py-3 text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
                 />
               </div>

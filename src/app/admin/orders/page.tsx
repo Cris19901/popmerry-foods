@@ -32,59 +32,96 @@ export default async function AdminOrdersPage() {
         {orders.length === 0 ? (
           <p className="text-stone-400 text-center py-20">No orders yet.</p>
         ) : (
-          <div className="overflow-x-auto">
-            <table className="w-full text-sm">
-              <thead className="bg-stone-50 border-b border-stone-200">
-                <tr>
-                  {['Customer', 'Date', 'Items', 'Total', 'Reference', 'Status'].map(h => (
-                    <th key={h} className="text-left px-5 py-3 text-xs font-semibold text-stone-500 uppercase tracking-wider">
-                      {h}
-                    </th>
-                  ))}
-                </tr>
-              </thead>
-              <tbody className="divide-y divide-stone-100">
-                {orders.map((order) => {
-                  const items = Array.isArray(order.items) ? order.items : [];
-                  return (
-                    <tr key={order.id} className="hover:bg-stone-50 transition-colors">
-                      <td className="px-5 py-4">
-                        <p className="font-medium text-stone-900">{order.customer_name}</p>
-                        <p className="text-stone-400 text-xs">{order.customer_email}</p>
+          <>
+            {/* Mobile cards */}
+            <div className="sm:hidden divide-y divide-stone-100">
+              {orders.map((order) => {
+                const items = Array.isArray(order.items) ? order.items : [];
+                return (
+                  <div key={order.id} className="p-4">
+                    <div className="flex items-start justify-between gap-2 mb-3">
+                      <div>
+                        <p className="font-medium text-stone-900 text-sm">{order.customer_name}</p>
+                        <p className="text-stone-400 text-xs mt-0.5">{order.customer_email}</p>
                         <p className="text-stone-400 text-xs">{order.customer_phone}</p>
-                      </td>
-                      <td className="px-5 py-4 text-stone-600">
-                        {new Date(order.created_at).toLocaleDateString('en-NG', {
-                          day: 'numeric', month: 'short', year: 'numeric',
-                        })}
-                      </td>
-                      <td className="px-5 py-4">
-                        <div className="space-y-0.5">
-                          {items.slice(0, 3).map((item: { product: { name: string }; quantity: number }, i: number) => (
-                            <p key={i} className="text-stone-600 text-xs">
-                              {item.quantity}× {item.product?.name}
-                            </p>
-                          ))}
-                          {items.length > 3 && (
-                            <p className="text-stone-400 text-xs">+{items.length - 3} more</p>
-                          )}
-                        </div>
-                      </td>
-                      <td className="px-5 py-4 font-semibold text-stone-900">
-                        {formatPrice(order.total)}
-                      </td>
-                      <td className="px-5 py-4 text-stone-400 text-xs font-mono">
-                        {order.paystack_reference ?? '—'}
-                      </td>
-                      <td className="px-5 py-4">
-                        <OrderStatusSelect orderId={order.id} currentStatus={order.status} />
-                      </td>
-                    </tr>
-                  );
-                })}
-              </tbody>
-            </table>
-          </div>
+                      </div>
+                      <OrderStatusSelect orderId={order.id} currentStatus={order.status} />
+                    </div>
+                    <div className="space-y-0.5 mb-3">
+                      {items.slice(0, 3).map((item: { product: { name: string }; quantity: number }, i: number) => (
+                        <p key={i} className="text-stone-600 text-xs">{item.quantity}× {item.product?.name}</p>
+                      ))}
+                      {items.length > 3 && <p className="text-stone-400 text-xs">+{items.length - 3} more</p>}
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <span className="font-semibold text-stone-900 text-sm">{formatPrice(order.total)}</span>
+                      <span className="text-stone-400 text-xs">
+                        {new Date(order.created_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })}
+                      </span>
+                    </div>
+                    {order.paystack_reference && (
+                      <p className="text-stone-300 text-xs font-mono mt-1">{order.paystack_reference}</p>
+                    )}
+                  </div>
+                );
+              })}
+            </div>
+
+            {/* Desktop table */}
+            <div className="hidden sm:block overflow-x-auto">
+              <table className="w-full text-sm">
+                <thead className="bg-stone-50 border-b border-stone-200">
+                  <tr>
+                    {['Customer', 'Date', 'Items', 'Total', 'Reference', 'Status'].map(h => (
+                      <th key={h} className="text-left px-5 py-3 text-xs font-semibold text-stone-500 uppercase tracking-wider">
+                        {h}
+                      </th>
+                    ))}
+                  </tr>
+                </thead>
+                <tbody className="divide-y divide-stone-100">
+                  {orders.map((order) => {
+                    const items = Array.isArray(order.items) ? order.items : [];
+                    return (
+                      <tr key={order.id} className="hover:bg-stone-50 transition-colors">
+                        <td className="px-5 py-4">
+                          <p className="font-medium text-stone-900">{order.customer_name}</p>
+                          <p className="text-stone-400 text-xs">{order.customer_email}</p>
+                          <p className="text-stone-400 text-xs">{order.customer_phone}</p>
+                        </td>
+                        <td className="px-5 py-4 text-stone-600">
+                          {new Date(order.created_at).toLocaleDateString('en-NG', {
+                            day: 'numeric', month: 'short', year: 'numeric',
+                          })}
+                        </td>
+                        <td className="px-5 py-4">
+                          <div className="space-y-0.5">
+                            {items.slice(0, 3).map((item: { product: { name: string }; quantity: number }, i: number) => (
+                              <p key={i} className="text-stone-600 text-xs">
+                                {item.quantity}× {item.product?.name}
+                              </p>
+                            ))}
+                            {items.length > 3 && (
+                              <p className="text-stone-400 text-xs">+{items.length - 3} more</p>
+                            )}
+                          </div>
+                        </td>
+                        <td className="px-5 py-4 font-semibold text-stone-900">
+                          {formatPrice(order.total)}
+                        </td>
+                        <td className="px-5 py-4 text-stone-400 text-xs font-mono">
+                          {order.paystack_reference ?? '—'}
+                        </td>
+                        <td className="px-5 py-4">
+                          <OrderStatusSelect orderId={order.id} currentStatus={order.status} />
+                        </td>
+                      </tr>
+                    );
+                  })}
+                </tbody>
+              </table>
+            </div>
+          </>
         )}
       </div>
     </div>
