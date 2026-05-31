@@ -182,17 +182,14 @@ export default async function HomePage() {
             {/* Popcorn */}
             <Link
               href="/products?cat=popcorn"
-              className="group relative overflow-hidden rounded-3xl p-8 sm:p-10 flex flex-col justify-end min-h-64 cursor-pointer sm:col-span-2 lg:col-span-1"
+              className="group relative overflow-hidden rounded-3xl p-8 sm:p-10 flex flex-col justify-end min-h-64 cursor-pointer"
             >
-              <div
-                className="absolute inset-0"
-                style={{ background: 'radial-gradient(ellipse at 70% 20%, #F5D060 0%, #C4851C 45%, #6B3A0A 75%, #3D1A00 100%)' }}
+              <img
+                src="https://images.unsplash.com/photo-1523207911345-32501502db22?auto=format&fit=crop&w=800&h=500&q=80"
+                alt="Popcorn"
+                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
               />
-              {/* Decorative emoji */}
-              <div className="absolute -right-3 -top-3 text-[130px] leading-none select-none opacity-25 rotate-12 transition-transform duration-700 group-hover:rotate-6 group-hover:scale-110 group-hover:opacity-30">
-                🍿
-              </div>
-              <div className="absolute inset-0 bg-gradient-to-t from-[#3D1A00]/85 via-[#3D1A00]/20 to-transparent" />
+              <div className="absolute inset-0 bg-gradient-to-t from-[#3D1A00]/90 via-[#6B3A0A]/50 to-transparent" />
               <div className="relative z-10">
                 <span className="inline-block bg-white/20 backdrop-blur-sm text-white text-xs font-bold px-3 py-1 rounded-full mb-3">
                   3 Flavours
