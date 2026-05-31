@@ -11,22 +11,22 @@ const playfair = Playfair_Display({ subsets: ['latin'], variable: '--font-playfa
 
 export const metadata: Metadata = {
   title: {
-    default: 'PopMerry Foods — Banana Cakes & Croissants',
+    default: 'PopMerry Foods — Cakes, Croissants & Popcorn',
     template: '%s — PopMerry Foods',
   },
   description:
-    'Handcrafted banana cakes and artisan croissants baked fresh daily in Lagos. Order online for fast delivery to your door.',
-  keywords: ['banana cake', 'croissant', 'bakery', 'fresh baked', 'Lagos', 'Nigeria', 'delivery'],
+    'Handcrafted banana cakes, artisan croissants, and freshly popped popcorn made daily in Lagos. Order online for fast delivery to your door.',
+  keywords: ['banana cake', 'croissant', 'popcorn', 'bakery', 'fresh baked', 'Lagos', 'Nigeria', 'delivery'],
   openGraph: {
-    title: 'PopMerry Foods — Banana Cakes & Croissants',
-    description: 'Handcrafted banana cakes and artisan croissants baked fresh daily. Order now.',
+    title: 'PopMerry Foods — Cakes, Croissants & Popcorn',
+    description: 'Handcrafted banana cakes, artisan croissants, and freshly popped popcorn made daily. Order now.',
     type: 'website',
     siteName: 'PopMerry Foods',
   },
   twitter: {
     card: 'summary_large_image',
     title: 'PopMerry Foods',
-    description: 'Handcrafted banana cakes and artisan croissants, baked fresh daily.',
+    description: 'Handcrafted banana cakes, artisan croissants, and freshly popped popcorn, made fresh daily.',
   },
 };
 

@@ -3,7 +3,7 @@ import { ArrowRight, Sparkles, Clock, Star, Package, Flame, Heart } from 'lucide
 import ProductCard from '@/components/ProductCard';
 import { getProducts } from '@/lib/products-db';
 
-const FEATURED_IDS = ['bc-classic', 'cr-butter', 'cr-almond', 'bn-morning'];
+const FEATURED_IDS = ['bc-classic', 'cr-butter', 'pc-classic', 'bn-morning'];
 
 export default async function HomePage() {
   const allProducts = await getProducts();
@@ -23,7 +23,7 @@ export default async function HomePage() {
         </div>
 
         {/* Hero content */}
-        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center">
+        <div className="relative z-10 max-w-4xl mx-auto px-4 sm:px-6 text-center pt-20 sm:pt-0">
           <div className="inline-flex items-center gap-2 bg-white/15 backdrop-blur-sm border border-white/20 text-white/90 text-sm font-medium px-4 py-2 rounded-full mb-8">
             <Sparkles size={14} className="text-warm-gold" />
             Fresh from our kitchen every morning
