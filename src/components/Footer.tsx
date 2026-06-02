@@ -43,6 +43,7 @@ export default function Footer() {
             <ul className="space-y-2.5 text-sm">
               {[
                 { href: '/about', label: 'About Us' },
+                { href: '/blog', label: 'Blog' },
                 { href: '/products?cat=banana-cake', label: 'Banana Cakes' },
                 { href: '/products?cat=croissant', label: 'Croissants' },
                 { href: '/products?cat=popcorn', label: 'Popcorn' },

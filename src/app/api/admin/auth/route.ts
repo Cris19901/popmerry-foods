@@ -14,7 +14,7 @@ export async function POST(req: NextRequest) {
   const token = await new SignJWT({ role: 'admin' })
     .setProtectedHeader({ alg: 'HS256' })
     .setIssuedAt()
-    .setExpirationTime('7d')
+    .setExpirationTime('8h')
     .sign(secret);
 
   const res = NextResponse.json({ ok: true });
@@ -22,7 +22,7 @@ export async function POST(req: NextRequest) {
     httpOnly: true,
     secure: process.env.NODE_ENV === 'production',
     sameSite: 'lax',
-    maxAge: 60 * 60 * 24 * 7,
+    maxAge: 60 * 60 * 8,
     path: '/',
   });
   return res;

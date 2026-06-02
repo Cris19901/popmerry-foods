@@ -5,6 +5,7 @@ import { ArrowLeft, Sparkles, Clock, Package } from 'lucide-react';
 import { getProducts, getProduct, formatPrice } from '@/lib/products-db';
 import { FREE_DELIVERY_THRESHOLD } from '@/lib/constants';
 import AddToCartButton from './AddToCartButton';
+import WaitlistButton from './WaitlistButton';
 
 interface Props {
   params: Promise<{ id: string }>;
@@ -195,6 +196,11 @@ export default async function ProductDetailPage({ params }: Props) {
               </p>
 
               <AddToCartButton product={product} />
+              {!product.isAvailable && (
+                <div className="mt-3">
+                  <WaitlistButton productId={product.id} />
+                </div>
+              )}
 
               <div className="mt-4 pt-4 border-t border-amber-50 text-center">
                 <p className="text-stone-400 text-xs">Free delivery on orders over {formatPrice(FREE_DELIVERY_THRESHOLD)}</p>

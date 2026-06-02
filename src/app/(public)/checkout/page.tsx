@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trash2, Minus, Plus, Lock, ArrowLeft } from 'lucide-react';
+import { Trash2, Minus, Plus, Lock, ArrowLeft, Tag, X } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
@@ -25,7 +25,36 @@ export default function CheckoutPage() {
   const { items, getTotal, updateQuantity, removeItem, clearCart } = useCartStore();
   const subtotal = getTotal();
   const deliveryFee = calcDeliveryFee(subtotal);
-  const total = subtotal + deliveryFee;
+
+  const [promo, setPromo] = useState<{ code: string; discount: number; description: string } | null>(null);
+  const [promoInput, setPromoInput] = useState('');
+  const [promoLoading, setPromoLoading] = useState(false);
+
+  const discount = promo?.discount ?? 0;
+  const total = subtotal + deliveryFee - discount;
+
+  const applyPromo = async () => {
+    if (!promoInput.trim()) return;
+    setPromoLoading(true);
+    try {
+      const res = await fetch('/api/promo/validate', {
+        method: 'POST',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ code: promoInput.trim().toUpperCase(), subtotal }),
+      });
+      const data = await res.json();
+      if (!res.ok) {
+        toast.error(data.error ?? 'Invalid promo code');
+      } else {
+        setPromo({ code: data.code, discount: data.discount, description: data.description });
+        toast.success(`Code applied! You saved ${formatPrice(data.discount)} 🎉`);
+      }
+    } catch {
+      toast.error('Could not apply code. Try again.');
+    } finally {
+      setPromoLoading(false);
+    }
+  };
 
   const [form, setForm] = useState<CustomerDetails>({
     name: '',
@@ -58,7 +87,7 @@ export default function CheckoutPage() {
       const res = await fetch('/api/orders', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customer: form, items, subtotal, deliveryFee, total }),
+        body: JSON.stringify({ customer: form, items, subtotal, deliveryFee, discount, total, promoCode: promo?.code }),
       });
       const { orderId } = await res.json();
 
@@ -247,7 +276,42 @@ export default function CheckoutPage() {
                   ))}
                 </div>
 
-                <div className="border-t border-stone-100 pt-4 space-y-2 text-sm">
+                {/* Promo code */}
+                <div className="border-t border-stone-100 pt-4">
+                  {promo ? (
+                    <div className="flex items-center justify-between bg-green-50 border border-green-200 rounded-xl px-3 py-2 mb-3">
+                      <div className="flex items-center gap-2">
+                        <Tag size={14} className="text-green-600" />
+                        <div>
+                          <p className="text-green-800 text-xs font-bold">{promo.code}</p>
+                          <p className="text-green-600 text-xs">{promo.description}</p>
+                        </div>
+                      </div>
+                      <button onClick={() => { setPromo(null); setPromoInput(''); }} className="text-green-500 hover:text-green-700">
+                        <X size={14} />
+                      </button>
+                    </div>
+                  ) : (
+                    <div className="flex gap-2 mb-3">
+                      <input
+                        value={promoInput}
+                        onChange={e => setPromoInput(e.target.value.toUpperCase())}
+                        onKeyDown={e => e.key === 'Enter' && applyPromo()}
+                        placeholder="Promo code"
+                        className="flex-1 border border-stone-200 rounded-xl px-3 py-2 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent uppercase"
+                      />
+                      <button
+                        onClick={applyPromo}
+                        disabled={promoLoading || !promoInput}
+                        className="text-xs font-bold text-amber-700 hover:text-amber-800 border border-amber-300 hover:border-amber-500 px-3 py-2 rounded-xl transition-colors disabled:opacity-50"
+                      >
+                        {promoLoading ? '…' : 'Apply'}
+                      </button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="space-y-2 text-sm">
                   <div className="flex justify-between text-stone-600">
                     <span>Subtotal</span>
                     <span className="font-semibold">{formatPrice(subtotal)}</span>
@@ -260,6 +324,12 @@ export default function CheckoutPage() {
                       <span className="font-semibold">{formatPrice(deliveryFee)}</span>
                     )}
                   </div>
+                  {discount > 0 && (
+                    <div className="flex justify-between text-green-600">
+                      <span>Discount ({promo?.code})</span>
+                      <span className="font-semibold">−{formatPrice(discount)}</span>
+                    </div>
+                  )}
                   <div className="flex justify-between font-bold text-stone-900 text-base border-t border-stone-100 pt-2 mt-2">
                     <span>Total</span>
                     <span className="text-amber-600 text-lg">{formatPrice(total)}</span>

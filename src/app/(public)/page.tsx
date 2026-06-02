@@ -2,6 +2,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowRight, Sparkles, Clock, Star, Package, Flame, Heart } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
+import Testimonials from '@/components/Testimonials';
 import { getProducts } from '@/lib/products-db';
 
 const FEATURED_IDS = ['bc-classic', 'cr-butter', 'pc-classic', 'bn-morning'];
@@ -343,64 +344,7 @@ export default async function HomePage() {
       </section>
 
       {/* ─── TESTIMONIALS ─────────────────────────────────────── */}
-      <section className="py-20 px-4 sm:px-6">
-        <div className="max-w-6xl mx-auto">
-          <div className="text-center mb-14">
-            <h2 className="font-display text-4xl sm:text-5xl font-bold text-stone-900">
-              What Our Customers
-              <br />
-              <span className="text-gradient-gold italic">Are Saying</span>
-            </h2>
-          </div>
-
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                name: 'Adaeze O.',
-                location: 'Lagos',
-                review: 'The Cream Cheese Banana Cake was absolutely divine! I ordered for my birthday and everyone kept asking where it was from. Already planning my next order.',
-                stars: 5,
-                initial: 'A',
-                color: 'bg-amber-800',
-              },
-              {
-                name: 'Emeka T.',
-                location: 'Abuja',
-                review: "The Almond Croissants are the best I've had in Nigeria — honestly better than some places I've been abroad. The delivery was fast and packaging was perfect.",
-                stars: 5,
-                initial: 'E',
-                color: 'bg-stone-700',
-              },
-              {
-                name: 'Funmi A.',
-                location: 'Lagos',
-                review: 'Ordered the Family Bundle for a gathering. Everything was fresh, warm, and absolutely delicious. The croissants were flaky and the cake was moist. 10/10!',
-                stars: 5,
-                initial: 'F',
-                color: 'bg-amber-900',
-              },
-            ].map(({ name, location, review, stars, initial, color }) => (
-              <div key={name} className="bg-white rounded-3xl p-6 shadow-sm border border-amber-100 card-hover">
-                <div className="flex items-center gap-1 mb-4">
-                  {Array.from({ length: stars }).map((_, i) => (
-                    <Star key={i} size={16} className="text-amber-400 fill-amber-400" />
-                  ))}
-                </div>
-                <p className="text-stone-600 text-sm leading-relaxed mb-5 italic">&ldquo;{review}&rdquo;</p>
-                <div className="flex items-center gap-3">
-                  <div className={`w-10 h-10 ${color} rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}>
-                    {initial}
-                  </div>
-                  <div>
-                    <p className="font-bold text-stone-900 text-sm">{name}</p>
-                    <p className="text-stone-400 text-xs">{location}</p>
-                  </div>
-                </div>
-              </div>
-            ))}
-          </div>
-        </div>
-      </section>
+      <Testimonials />
     </>
   );
 }
