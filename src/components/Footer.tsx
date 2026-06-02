@@ -47,6 +47,7 @@ export default function Footer() {
                 { href: '/products?cat=popcorn', label: 'Popcorn' },
                 { href: '/products?cat=bundle', label: 'Bundle Deals' },
                 { href: '/custom-order', label: 'Custom Orders' },
+                { href: '/track-order', label: 'Track My Order' },
               ].map(({ href, label }) => (
                 <li key={href}>
                   <Link href={href} className="hover:text-amber-400 transition-colors">

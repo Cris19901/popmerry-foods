@@ -45,6 +45,7 @@ export default function Header() {
             {[
               { href: '/products', label: 'Our Menu' },
               { href: '/custom-order', label: 'Custom Orders' },
+              { href: '/track-order', label: 'Track Order' },
             ].map(({ href, label }) => (
               <Link
                 key={href}
@@ -114,6 +115,13 @@ export default function Header() {
               onClick={() => setMobileOpen(false)}
             >
               Custom Orders
+            </Link>
+            <Link
+              href="/track-order"
+              className="text-stone-800 font-semibold text-base py-1"
+              onClick={() => setMobileOpen(false)}
+            >
+              Track My Order
             </Link>
             <Link
               href="/products"
