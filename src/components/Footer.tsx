@@ -44,6 +44,7 @@ export default function Footer() {
               {[
                 { href: '/about', label: 'About Us' },
                 { href: '/blog', label: 'Blog' },
+                { href: '/blog', label: 'Blog' },
                 { href: '/products?cat=banana-cake', label: 'Banana Cakes' },
                 { href: '/products?cat=croissant', label: 'Croissants' },
                 { href: '/products?cat=popcorn', label: 'Popcorn' },

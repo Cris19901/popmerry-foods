@@ -2,124 +2,47 @@ export interface Post {
   slug: string;
   title: string;
   excerpt: string;
-  category: string;
   date: string;
-  image: string;
+  readMins: number;
+  category: string;
   content: string;
 }
 
 export const posts: Post[] = [
   {
-    slug: 'best-banana-cake-lagos',
+    slug: 'best-banana-cake-in-lagos',
     title: 'Why PopMerry Makes the Best Banana Cake in Lagos',
-    excerpt: 'What separates a great banana cake from an unforgettable one? We break down exactly what goes into every loaf we bake.',
+    excerpt: "We break down exactly what goes into every loaf — and why it tastes unlike anything else you've tried.",
+    date: '2026-05-10',
+    readMins: 4,
     category: 'Behind the Scenes',
-    date: 'May 2025',
-    image: 'https://images.unsplash.com/photo-1569762404472-026308ba6b64?auto=format&fit=crop&w=800&h=500&q=80',
-    content: `
-## The Secret is in the Bananas
-
-Most bakeries use barely-ripe bananas. We wait until ours are almost black — that's when the natural sugars are fully developed and the flavour is at its deepest.
-
-## No Shortcuts on Butter
-
-We use full-fat, real butter. No margarine, no substitutes. You can taste the difference immediately.
-
-## Baked Fresh Every Morning
-
-Your cake is never more than a few hours old when it reaches you. We don't bake in batches for the week — we bake to order.
-
-## The Right Flour Ratio
-
-Getting the moisture right in a banana cake is an art. Too much flour and it's dry. Too little and it doesn't hold. We've tested our recipe hundreds of times to find the sweet spot.
-
-Whether you choose our Classic, Chocolate Chip, Walnut, or Caramel Drizzle — every variant starts with the same foundation of quality ingredients and genuine care.
-
-[Order yours today →](/products?cat=banana-cake)
-    `.trim(),
+    content: '<p>If you have ever bitten into a banana cake and felt vaguely disappointed — dense, dry, or just banana-flavoured sugar — you will understand what we were trying to fix when we started PopMerry Foods.</p><h2>It starts with the bananas</h2><p>Most commercial bakers use under-ripe bananas because they are firmer and easier to handle. We do the opposite. Our bananas are ripened until the skins are almost fully black — that is when the starch has fully converted to sugar, giving you that deep, naturally sweet flavour that you just cannot fake with essence.</p><h2>Real butter. Always.</h2><p>We use unsalted European-style butter in every bake. It is more expensive. It is worth it. The difference in flavour between real butter and margarine is unmistakable.</p><h2>We never pre-bake</h2><p>Every order is baked the morning of delivery. When your cake arrives, it was in our oven within the last few hours.</p><h2>Order yours</h2><p>Try the <a href="/products/bc-classic">Classic Banana Cake</a> or go indulgent with the <a href="/products/bc-cream-cheese">Cream Cheese Frosted</a>.</p>',
   },
   {
-    slug: 'how-to-order-catering-lagos',
-    title: 'How to Order Catering for Your Office or Event in Lagos',
-    excerpt: 'Planning office breakfast, a team retreat, or a corporate event? Here\'s everything you need to know about ordering in bulk from PopMerry.',
+    slug: 'how-to-order-custom-cake-for-events',
+    title: 'How to Order Custom Cakes for Events (Without the Stress)',
+    excerpt: "Planning a birthday, wedding, or baby shower? Here's how to get a custom cake sorted.",
+    date: '2026-05-18',
+    readMins: 5,
     category: 'Event Planning',
-    date: 'April 2025',
-    image: 'https://images.unsplash.com/photo-1556742059-47b93231f536?auto=format&fit=crop&w=800&h=500&q=80',
-    content: `
-## Why More Lagos Companies Choose PopMerry for Office Catering
-
-Office catering isn't just about filling stomachs. It's about giving your team something to look forward to — a moment in the day that feels like a treat.
-
-## What We Offer for Corporates
-
-- **Fresh croissants**: Butter, almond, ham & cheese, Nutella, and more — delivered warm
-- **Banana cakes**: Whole cakes or slices, beautifully packaged
-- **Popcorn packs**: Perfect for meetings and conference snacks
-- **Custom bundles**: We'll build a menu around your team size and preferences
-
-## How to Get Started
-
-1. **Tell us your headcount**: We scale the order based on team size
-2. **Pick your items**: Mix and match from our menu
-3. **Choose frequency**: Daily, weekly, or one-off
-4. **We handle the rest**: Delivery scheduled at the time your team arrives
-
-## Volume Pricing
-
-Regular orders unlock better rates. Get in touch via our [catering form](/catering) or WhatsApp for a custom quote.
-
-The earlier you book, the better — our kitchen runs on a production schedule and we may need 24-48 hours notice for large orders.
-    `.trim(),
+    content: '<p>Ordering a custom cake for an event in Lagos can feel overwhelming. Here is how we make it simple at PopMerry.</p><h2>Start at least 5 days ahead</h2><p>For events, earlier is always better. For large events (50+ people), we recommend 10-14 days.</p><h2>Know your quantities</h2><p>One standard banana cake serves 12-16 people as a dessert. For croissant platters, count 2 per person for breakfast. Popcorn works well as a reception snack — 1 large bag per 3 guests.</p><h2>What to include in your request</h2><ul><li>Event date and delivery time</li><li>Number of guests</li><li>Flavour preferences and dietary restrictions</li><li>Delivery address</li></ul><h2>Submit your request</h2><p>Use our <a href="/custom-order">custom order form</a> and we will respond within 24 hours.</p>',
   },
   {
-    slug: 'types-of-croissants-guide',
-    title: 'A Guide to Our 6 Croissant Varieties — and How to Choose',
-    excerpt: 'Classic butter? Almond? Ham & Cheese? We walk you through every croissant we make so you can order exactly what you\'re craving.',
+    slug: 'croissants-in-nigeria-what-to-look-for',
+    title: 'Croissants in Nigeria: What Separates the Real Thing from the Rest',
+    excerpt: "Not all croissants are created equal. Here's what proper laminated pastry looks and tastes like.",
+    date: '2026-05-25',
+    readMins: 4,
+    category: 'Baking Education',
+    content: '<p>The croissant is one of the most technically demanding pastries in baking. Done properly, it has paper-thin layers of butter laminated into the dough. Done poorly, it is just a crescent-shaped bread roll.</p><h2>The honeycomb interior test</h2><p>Break a proper croissant in half. You should see a web of large, irregular air pockets. If it is dense and bread-like inside, the lamination did not work.</p><h2>The shatter test</h2><p>A properly baked croissant should shatter when you bite into it. The outer crust should be deeply golden and crispy enough to leave flakes on your shirt.</p><h2>Fresh makes all the difference</h2><p>Croissants are at their peak within 4 hours of baking. This is why we bake every morning and deliver the same day.</p><p>Try our <a href="/products/cr-butter">Classic Butter Croissant</a> or <a href="/products/cr-almond">Almond Croissant</a>.</p>',
+  },
+  {
+    slug: 'popcorn-flavours-guide',
+    title: 'Salted, Caramel, or Spicy? Your Guide to PopMerry Popcorn',
+    excerpt: "Can't decide which popcorn to order? We break down each flavour and the perfect occasion.",
+    date: '2026-06-01',
+    readMins: 3,
     category: 'Product Guide',
-    date: 'March 2025',
-    image: 'https://images.unsplash.com/photo-1623334044303-241021148842?auto=format&fit=crop&w=800&h=500&q=80',
-    content: `
-## The Classic Butter Croissant
-
-If you've never had a proper croissant, start here. Shatteringly crisp on the outside, pillowy and warm inside. This is the one our bakers are most proud of.
-
-**Best for**: First-timers, croissant purists, breakfast.
-
-## The Almond Croissant
-
-Rich almond cream inside, flaked almonds on top, dusted with powdered sugar. Our bestseller and the one customers order again and again.
-
-**Best for**: A weekend treat, afternoon tea, impressing guests.
-
-## Pain au Chocolat
-
-Dark chocolate tucked inside layers of butter pastry. Slightly less sweet than you'd expect — in the best possible way.
-
-**Best for**: Chocolate lovers, children, pairing with coffee.
-
-## Ham & Cheese Croissant
-
-Premium smoked ham and melted cheese folded into a golden, flaky croissant. The savoury option.
-
-**Best for**: Brunch, lunch, anyone who finds sweet pastries too rich.
-
-## Strawberry Jam Croissant
-
-Sweet strawberry jam nestled in buttery flaky layers. Light, fruity, and delightful.
-
-**Best for**: Those who prefer fruit flavours, lighter breakfasts.
-
-## Nutella Croissant
-
-Creamy Nutella swirled inside a warm, flaky croissant. The indulgent choice.
-
-**Best for**: Nutella lovers, children, dessert croissants.
-
----
-
-Not sure which to choose? Order the **Morning Delight Bundle** — you get a mix of classics plus a slice of banana cake.
-
-[Browse croissants →](/products?cat=croissant)
-    `.trim(),
+    content: '<p>PopMerry popcorn is freshly popped in small batches — never pre-packaged, never stale.</p><h2>Classic Salted</h2><p>Light, airy kernels with just enough sea salt. Perfect for: movie nights, office snacking, kids events.</p><h2>Caramel</h2><p>Our most popular flavour. Golden caramel-coated kernels made in-house — no pre-made sauce. Perfect for: gifts, birthday parties, anyone with a sweet tooth.</p><h2>Spicy Pepper</h2><p>A blend of chilli and pepper that builds slowly. The heat is real but balanced. Perfect for: corporate events and anyone who needs a snack with personality.</p><p>Order via our <a href="/products?cat=popcorn">popcorn menu</a>.</p>',
   },
 ];
