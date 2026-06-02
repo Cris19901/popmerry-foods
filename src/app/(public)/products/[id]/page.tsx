@@ -1,5 +1,6 @@
 import { notFound } from 'next/navigation';
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowLeft, Sparkles, Clock, Package } from 'lucide-react';
 import { getProducts, getProduct, formatPrice } from '@/lib/products-db';
 import { FREE_DELIVERY_THRESHOLD } from '@/lib/constants';
@@ -66,10 +67,13 @@ export default async function ProductDetailPage({ params }: Props) {
           className="absolute inset-0"
           style={{ background: `linear-gradient(135deg, ${product.gradientFrom}, ${product.gradientTo})` }}
         />
-        <img
+        <Image
           src={imageUrl}
           alt={product.name}
-          className="w-full h-full object-cover"
+          fill
+          className="object-cover"
+          sizes="100vw"
+          priority
         />
         <div className="absolute inset-0 bg-gradient-to-t from-[#1A0800]/70 via-transparent to-[#1A0800]/30" />
 
@@ -170,14 +174,18 @@ export default async function ProductDetailPage({ params }: Props) {
                   className="group bg-white rounded-2xl overflow-hidden border border-amber-100 hover:shadow-md transition-shadow"
                 >
                   <div
-                    className="h-36 overflow-hidden"
+                    className="relative h-36 overflow-hidden"
                     style={{ background: `linear-gradient(135deg, ${rel.gradientFrom}, ${rel.gradientTo})` }}
                   >
-                    <img
-                      src={`https://images.unsplash.com/photo-${rel.imageId}?auto=format&fit=crop&w=400&h=200&q=75`}
-                      alt={rel.name}
-                      className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                    />
+                    {rel.imageId && (
+                      <Image
+                        src={`https://images.unsplash.com/photo-${rel.imageId}?auto=format&fit=crop&w=400&h=200&q=75`}
+                        alt={rel.name}
+                        fill
+                        className="object-cover group-hover:scale-105 transition-transform duration-500"
+                        sizes="(max-width: 640px) 100vw, 33vw"
+                      />
+                    )}
                   </div>
                   <div className="p-4">
                     <p className="font-semibold text-stone-900 text-sm leading-tight">{rel.name}</p>

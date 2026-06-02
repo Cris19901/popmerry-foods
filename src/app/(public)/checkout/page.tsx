@@ -4,6 +4,7 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import { Trash2, Minus, Plus, Lock, ArrowLeft } from 'lucide-react';
 import Link from 'next/link';
+import Image from 'next/image';
 import toast from 'react-hot-toast';
 import Script from 'next/script';
 import { useCartStore } from '@/lib/cart-store';
@@ -179,6 +180,12 @@ export default function CheckoutPage() {
                       placeholder="Full address including street, area, city"
                       className="w-full border border-stone-200 rounded-xl px-4 py-3 text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent transition"
                     />
+                    <p className="text-xs text-stone-400 mt-1.5">
+                      We deliver to <span className="text-stone-600 font-medium">Lagos Island, Lagos Mainland, Ibadan, Ilorin, Osun, Ogun, Oyo Town</span> and <span className="text-stone-600 font-medium">Ogbomosho</span>.{' '}
+                      <a href="https://wa.me/2347039571698" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline font-medium">
+                        WhatsApp us
+                      </a>{' '}if unsure about your area.
+                    </p>
                   </div>
 
                   <div>
@@ -207,15 +214,18 @@ export default function CheckoutPage() {
                   {items.map(item => (
                     <div key={item.product.id} className="flex items-center gap-3">
                       <div
-                        className="w-10 h-10 rounded-xl flex-shrink-0 overflow-hidden"
+                        className="relative w-10 h-10 rounded-xl flex-shrink-0 overflow-hidden"
                         style={{ background: `linear-gradient(135deg, ${item.product.gradientFrom}, ${item.product.gradientTo})` }}
                       >
-                        <img
-                          src={`https://images.unsplash.com/photo-${item.product.imageId}?auto=format&fit=crop&w=40&h=40&q=80`}
-                          alt={item.product.name}
-                          className="w-full h-full object-cover"
-                          onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                        />
+                        {item.product.imageId && (
+                          <Image
+                            src={`https://images.unsplash.com/photo-${item.product.imageId}?auto=format&fit=crop&w=40&h=40&q=80`}
+                            alt={item.product.name}
+                            fill
+                            className="object-cover"
+                            sizes="40px"
+                          />
+                        )}
                       </div>
                       <div className="flex-1 min-w-0">
                         <p className="text-stone-800 text-sm font-medium truncate">{item.product.name}</p>

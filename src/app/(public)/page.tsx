@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import Image from 'next/image';
 import { ArrowRight, Sparkles, Clock, Star, Package, Flame, Heart } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import { getProducts } from '@/lib/products-db';
@@ -61,6 +62,20 @@ export default async function HomePage() {
         <div className="absolute bottom-8 left-1/2 -translate-x-1/2 flex flex-col items-center gap-1 text-white/50">
           <span className="text-xs font-medium tracking-widest uppercase">Scroll</span>
           <div className="w-px h-10 bg-gradient-to-b from-white/40 to-transparent" />
+        </div>
+      </section>
+
+      {/* ─── DELIVERY ZONES ───────────────────────────────────── */}
+      <section className="bg-amber-700 py-3 px-4">
+        <div className="max-w-5xl mx-auto flex flex-col sm:flex-row items-center justify-center gap-2 sm:gap-4 text-center">
+          <span className="text-amber-100 text-xs font-semibold uppercase tracking-widest flex-shrink-0">We deliver to</span>
+          <div className="flex flex-wrap items-center justify-center gap-2">
+            {['Lagos Island', 'Lagos Mainland', 'Ibadan', 'Ilorin', 'Osun', 'Ogun', 'Oyo Town', 'Ogbomosho'].map(zone => (
+              <span key={zone} className="bg-white/20 text-white text-xs font-semibold px-3 py-1 rounded-full">
+                {zone}
+              </span>
+            ))}
+          </div>
         </div>
       </section>
 
@@ -138,10 +153,12 @@ export default async function HomePage() {
               href="/products?cat=banana-cake"
               className="group relative overflow-hidden rounded-3xl p-8 sm:p-10 flex flex-col justify-end min-h-64 cursor-pointer"
             >
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1569762404472-026308ba6b64?auto=format&fit=crop&w=800&h=500&q=80"
                 alt="Banana Cakes"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1A0800]/90 via-[#5C1E00]/50 to-transparent" />
               <div className="relative z-10">
@@ -161,10 +178,12 @@ export default async function HomePage() {
               href="/products?cat=croissant"
               className="group relative overflow-hidden rounded-3xl p-8 sm:p-10 flex flex-col justify-end min-h-64 cursor-pointer"
             >
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1623334044303-241021148842?auto=format&fit=crop&w=800&h=500&q=80"
                 alt="Croissants"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#1A0800]/90 via-[#7C2D12]/50 to-transparent" />
               <div className="relative z-10">
@@ -184,10 +203,12 @@ export default async function HomePage() {
               href="/products?cat=popcorn"
               className="group relative overflow-hidden rounded-3xl p-8 sm:p-10 flex flex-col justify-end min-h-64 cursor-pointer"
             >
-              <img
+              <Image
                 src="https://images.unsplash.com/photo-1523207911345-32501502db22?auto=format&fit=crop&w=800&h=500&q=80"
                 alt="Popcorn"
-                className="absolute inset-0 w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                fill
+                className="object-cover transition-transform duration-700 group-hover:scale-105"
+                sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 33vw"
               />
               <div className="absolute inset-0 bg-gradient-to-t from-[#3D1A00]/90 via-[#6B3A0A]/50 to-transparent" />
               <div className="relative z-10">

@@ -1,6 +1,7 @@
 'use client';
 
 import Link from 'next/link';
+import Image from 'next/image';
 import { Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Product } from '@/types';
@@ -31,12 +32,12 @@ export default function ProductCard({ product }: Props) {
           className="relative h-52 overflow-hidden"
           style={{ background: `linear-gradient(135deg, ${product.gradientFrom}, ${product.gradientTo})` }}
         >
-          <img
+          <Image
             src={imageUrl}
             alt={product.name}
-            className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
-            loading="lazy"
-            onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
+            fill
+            className="object-cover transition-transform duration-500 group-hover:scale-105"
+            sizes="(max-width: 640px) 100vw, (max-width: 1024px) 50vw, 25vw"
           />
           <div className="absolute inset-0 bg-gradient-to-t from-black/30 via-transparent to-transparent" />
 

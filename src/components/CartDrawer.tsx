@@ -2,6 +2,7 @@
 
 import { useEffect } from 'react';
 import Link from 'next/link';
+import Image from 'next/image';
 import { X, Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import { useCartStore } from '@/lib/cart-store';
 import { formatPrice } from '@/lib/products-data';
@@ -77,17 +78,20 @@ export default function CartDrawer() {
               <div key={item.product.id} className="flex items-start gap-3 bg-amber-50 rounded-2xl p-3.5">
                 {/* Product thumbnail */}
                 <div
-                  className="w-14 h-14 rounded-xl flex-shrink-0 overflow-hidden"
+                  className="relative w-14 h-14 rounded-xl flex-shrink-0 overflow-hidden"
                   style={{
                     background: `linear-gradient(135deg, ${item.product.gradientFrom}, ${item.product.gradientTo})`,
                   }}
                 >
-                  <img
-                    src={`https://images.unsplash.com/photo-${item.product.imageId}?auto=format&fit=crop&w=56&h=56&q=80`}
-                    alt={item.product.name}
-                    className="w-full h-full object-cover"
-                    onError={(e) => { (e.target as HTMLImageElement).style.display = 'none'; }}
-                  />
+                  {item.product.imageId && (
+                    <Image
+                      src={`https://images.unsplash.com/photo-${item.product.imageId}?auto=format&fit=crop&w=56&h=56&q=80`}
+                      alt={item.product.name}
+                      fill
+                      className="object-cover"
+                      sizes="56px"
+                    />
+                  )}
                 </div>
 
                 <div className="flex-1 min-w-0">

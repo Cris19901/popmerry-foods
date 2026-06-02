@@ -2,6 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
+import Image from 'next/image';
 import { Plus, Pencil, Trash2, Database } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ProductFormModal from './ProductFormModal';
@@ -117,14 +118,16 @@ export default function ProductsAdminClient({ products, dbReady }: Props) {
           {products.map(product => (
             <div key={product.id} className="p-4 flex items-center gap-3">
               <div
-                className="w-12 h-12 rounded-xl overflow-hidden flex-shrink-0"
+                className="relative w-12 h-12 rounded-xl overflow-hidden flex-shrink-0"
                 style={{ background: `linear-gradient(135deg, ${product.gradientFrom}, ${product.gradientTo})` }}
               >
                 {product.imageId && (
-                  <img
+                  <Image
                     src={`https://images.unsplash.com/photo-${product.imageId}?auto=format&fit=crop&w=48&h=48&q=70`}
                     alt={product.name}
-                    className="w-full h-full object-cover"
+                    fill
+                    className="object-cover"
+                    sizes="48px"
                   />
                 )}
               </div>
@@ -181,14 +184,16 @@ export default function ProductsAdminClient({ products, dbReady }: Props) {
                 <td className="px-5 py-4">
                   <div className="flex items-center gap-3">
                     <div
-                      className="w-10 h-10 rounded-xl overflow-hidden flex-shrink-0"
+                      className="relative w-10 h-10 rounded-xl overflow-hidden flex-shrink-0"
                       style={{ background: `linear-gradient(135deg, ${product.gradientFrom}, ${product.gradientTo})` }}
                     >
                       {product.imageId && (
-                        <img
+                        <Image
                           src={`https://images.unsplash.com/photo-${product.imageId}?auto=format&fit=crop&w=40&h=40&q=70`}
                           alt={product.name}
-                          className="w-full h-full object-cover"
+                          fill
+                          className="object-cover"
+                          sizes="40px"
                         />
                       )}
                     </div>
