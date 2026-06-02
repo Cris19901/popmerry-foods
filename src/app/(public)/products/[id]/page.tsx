@@ -165,6 +165,19 @@ export default async function ProductDetailPage({ params }: Props) {
                 {product.isAvailable ? 'In stock — ready to order' : 'Currently unavailable'}
               </span>
             </div>
+
+            {/* WhatsApp share */}
+            <a
+              href={`https://wa.me/?text=${encodeURIComponent(`Check out ${product.name} from PopMerry Foods 🍰 https://popmerryfoods.com.ng/products/${product.id}`)}`}
+              target="_blank"
+              rel="noopener noreferrer"
+              className="inline-flex items-center gap-2 text-sm text-green-700 font-semibold hover:text-green-800 transition-colors"
+            >
+              <svg viewBox="0 0 24 24" className="w-4 h-4 fill-current" xmlns="http://www.w3.org/2000/svg">
+                <path d="M12.002 2C6.477 2 2 6.477 2 12.001c0 1.761.461 3.413 1.27 4.847L2 22l5.315-1.246A9.96 9.96 0 0 0 12.002 22C17.525 22 22 17.523 22 12.001 22 6.477 17.525 2 12.002 2Zm0 18.18a8.147 8.147 0 0 1-4.148-1.134l-.298-.177-3.095.73.754-3.02-.194-.31A8.133 8.133 0 0 1 3.82 12c0-4.513 3.672-8.18 8.18-8.18 4.51 0 8.18 3.667 8.18 8.18 0 4.513-3.67 8.18-8.178 8.18Zm4.48-6.124c-.245-.123-1.452-.716-1.677-.798-.226-.082-.39-.123-.554.123-.164.245-.636.798-.78.962-.143.164-.287.185-.532.062-.245-.123-1.035-.381-1.973-1.218-.729-.65-1.22-1.452-1.363-1.696-.143-.245-.015-.378.107-.5.11-.11.245-.287.368-.43.122-.143.163-.245.245-.41.082-.163.041-.307-.021-.43-.062-.123-.554-1.334-.76-1.826-.2-.48-.402-.414-.554-.422l-.472-.009c-.163 0-.43.062-.655.307-.226.245-.861.841-.861 2.05 0 1.21.88 2.378 1.002 2.541.123.163 1.73 2.645 4.196 3.71.587.253 1.044.404 1.401.517.588.187 1.124.16 1.548.097.472-.07 1.452-.594 1.657-1.167.205-.573.205-1.065.143-1.167-.062-.103-.225-.164-.47-.287Z"/>
+              </svg>
+              Share on WhatsApp
+            </a>
           </div>
 
           {/* Right — order card */}

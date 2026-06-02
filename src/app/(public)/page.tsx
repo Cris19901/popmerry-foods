@@ -162,6 +162,34 @@ export default async function HomePage() {
         </div>
       </section>
 
+      {/* ─── HOW IT WORKS ─────────────────────────────────────── */}
+      <section className="py-16 sm:py-20 px-4 sm:px-6 bg-[#1A0800]">
+        <div className="max-w-5xl mx-auto">
+          <div className="text-center mb-12">
+            <span className="inline-block text-amber-400 font-semibold text-sm uppercase tracking-widest mb-3">Simple as 1-2-3</span>
+            <h2 className="font-display text-4xl sm:text-5xl font-bold text-white">
+              How It Works
+            </h2>
+          </div>
+          <div className="grid grid-cols-1 sm:grid-cols-3 gap-8">
+            {[
+              { step: '01', title: 'Browse & Order', body: 'Pick your favourites from our menu and checkout securely with Paystack in under 2 minutes.', icon: '🛒' },
+              { step: '02', title: 'We Bake Fresh', body: 'Your order triggers our bakers. Everything is made fresh the morning of your delivery — never pre-made.', icon: '👨‍🍳' },
+              { step: '03', title: 'Delivered Warm', body: 'We deliver straight to your door across Lagos, Ibadan, Ilorin and more. Arrive warm, leave happy.', icon: '🚀' },
+            ].map(({ step, title, body, icon }) => (
+              <div key={step} className="relative text-center">
+                <div className="text-5xl mb-4">{icon}</div>
+                <span className="text-amber-700/50 font-display text-6xl font-bold absolute -top-2 left-1/2 -translate-x-1/2 select-none pointer-events-none">
+                  {step}
+                </span>
+                <h3 className="font-display text-xl font-bold text-white mb-2 relative">{title}</h3>
+                <p className="text-stone-400 text-sm leading-relaxed relative">{body}</p>
+              </div>
+            ))}
+          </div>
+        </div>
+      </section>
+
       {/* ─── CATEGORIES ───────────────────────────────────────── */}
       <section className="py-16 px-4 sm:px-6 bg-white">
         <div className="max-w-6xl mx-auto">
