@@ -1,11 +1,49 @@
-const requests = new Map<string, number[]>();
+import { Redis } from '@upstash/redis';
+import { Ratelimit } from '@upstash/ratelimit';
 
-export function rateLimit(ip: string, limit: number, windowMs: number): boolean {
+// ── In-memory fallback (used when Upstash env vars are not set) ──────────────
+const inMemory = new Map<string, number[]>();
+
+function inMemoryLimit(ip: string, limit: number, windowMs: number): boolean {
   const now = Date.now();
-  const windowStart = now - windowMs;
-  const timestamps = (requests.get(ip) ?? []).filter(t => t > windowStart);
+  const timestamps = (inMemory.get(ip) ?? []).filter(t => t > now - windowMs);
   if (timestamps.length >= limit) return false;
   timestamps.push(now);
-  requests.set(ip, timestamps);
+  inMemory.set(ip, timestamps);
   return true;
+}
+
+// ── Upstash Redis limiter (used in production when env vars are set) ─────────
+let redisLimiter: Ratelimit | null = null;
+
+if (
+  process.env.UPSTASH_REDIS_REST_URL &&
+  process.env.UPSTASH_REDIS_REST_TOKEN
+) {
+  const redis = new Redis({
+    url: process.env.UPSTASH_REDIS_REST_URL,
+    token: process.env.UPSTASH_REDIS_REST_TOKEN,
+  });
+  // Default: 10 requests per 60 seconds sliding window
+  redisLimiter = new Ratelimit({
+    redis,
+    limiter: Ratelimit.slidingWindow(10, '60 s'),
+    analytics: true,
+    prefix: 'popmerry_rl',
+  });
+}
+
+// ── Public helper ─────────────────────────────────────────────────────────────
+// Returns true = allow, false = block
+export async function rateLimitAsync(ip: string): Promise<boolean> {
+  if (redisLimiter) {
+    const { success } = await redisLimiter.limit(ip);
+    return success;
+  }
+  return inMemoryLimit(ip, 10, 60_000);
+}
+
+// Synchronous fallback kept for routes that haven't been migrated yet
+export function rateLimit(ip: string, limit: number, windowMs: number): boolean {
+  return inMemoryLimit(ip, limit, windowMs);
 }

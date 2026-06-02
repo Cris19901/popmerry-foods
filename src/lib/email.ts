@@ -3,8 +3,12 @@ import { formatPrice } from './products-data';
 
 const resend = new Resend(process.env.RESEND_API_KEY);
 
-const FROM = 'PopMerry Foods <onboarding@resend.dev>';
-const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'hello@popmerryfoods.com';
+// Switch FROM to your real domain once verified in Resend:
+// 1. Go to resend.com → Domains → Add Domain → popmerryfoods.com.ng
+// 2. Add the DNS records Resend gives you in Cloudflare
+// 3. Update the FROM line below and remove the fallback
+const FROM = process.env.RESEND_FROM_EMAIL ?? 'PopMerry Foods <onboarding@resend.dev>';
+const ADMIN_EMAIL = process.env.ADMIN_EMAIL ?? 'hello@popmerryfoods.com.ng';
 
 interface OrderEmailData {
   orderId: string;

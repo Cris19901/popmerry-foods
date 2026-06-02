@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Trash2, Minus, Plus, Lock, ArrowLeft, Tag, X } from 'lucide-react';
+import { Trash2, Minus, Plus, Lock, ArrowLeft, Tag, X, Banknote, CreditCard, Copy, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
 import Image from 'next/image';
 import toast from 'react-hot-toast';
@@ -56,6 +56,16 @@ export default function CheckoutPage() {
     }
   };
 
+  const [payMethod, setPayMethod] = useState<'paystack' | 'transfer'>('paystack');
+  const [transferRef, setTransferRef] = useState('');
+  const [copied, setCopied] = useState(false);
+
+  const copyAccount = () => {
+    navigator.clipboard.writeText(process.env.NEXT_PUBLIC_BANK_ACCOUNT_NUMBER ?? '');
+    setCopied(true);
+    setTimeout(() => setCopied(false), 2000);
+  };
+
   const [form, setForm] = useState<CustomerDetails>({
     name: '',
     email: '',
@@ -78,28 +88,27 @@ export default function CheckoutPage() {
     return true;
   };
 
+  const createOrder = async () => {
+    const res = await fetch('/api/orders', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ customer: form, items, subtotal, deliveryFee, discount, total, promoCode: promo?.code }),
+    });
+    const data = await res.json();
+    if (!res.ok) throw new Error('Failed to create order');
+    return data.orderId as string;
+  };
+
   const handlePay = async () => {
     if (!validate()) return;
     setLoading(true);
-
     try {
-      // Save order first
-      const res = await fetch('/api/orders', {
-        method: 'POST',
-        headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ customer: form, items, subtotal, deliveryFee, discount, total, promoCode: promo?.code }),
-      });
-      const { orderId } = await res.json();
-
-      if (!res.ok) throw new Error('Failed to create order');
-
+      const orderId = await createOrder();
       const reference = `popmerry_${orderId}_${Date.now()}`;
-
-      // Open Paystack popup
       const handler = window.PaystackPop.setup({
         key: process.env.NEXT_PUBLIC_PAYSTACK_PUBLIC_KEY,
         email: form.email,
-        amount: total * 100, // kobo
+        amount: total * 100,
         currency: 'NGN',
         ref: reference,
         metadata: { orderId, customerName: form.name, customerPhone: form.phone },
@@ -108,25 +117,37 @@ export default function CheckoutPage() {
           toast('Payment cancelled. Your order is saved — you can pay later.', { icon: '⚠️' });
         },
         callback: async (response: { reference: string }) => {
-          // Verify payment
           const verifyRes = await fetch('/api/paystack/verify', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
             body: JSON.stringify({ reference: response.reference, orderId }),
           });
           const data = await verifyRes.json();
-
           if (data.success) {
             clearCart();
             router.push(`/order-confirmation?orderId=${orderId}`);
           } else {
-            toast.error('Payment verification failed. Contact us with your reference: ' + response.reference);
+            toast.error('Payment verification failed. Contact us with ref: ' + response.reference);
             setLoading(false);
           }
         },
       });
-
       handler.openIframe();
+    } catch {
+      toast.error('Something went wrong. Please try again.');
+      setLoading(false);
+    }
+  };
+
+  const handleTransfer = async () => {
+    if (!validate()) return;
+    setLoading(true);
+    try {
+      const orderId = await createOrder();
+      clearCart();
+      const waMsg = `Hi! I just placed a PopMerry order #${orderId.slice(0, 8).toUpperCase()} for ${formatPrice(total)}. I'll be sending payment via bank transfer${transferRef ? `. Transfer reference: ${transferRef}` : ''}.`;
+      window.open(`https://wa.me/2347039571698?text=${encodeURIComponent(waMsg)}`, '_blank');
+      router.push(`/order-confirmation?orderId=${orderId}&method=transfer`);
     } catch {
       toast.error('Something went wrong. Please try again.');
       setLoading(false);
@@ -336,25 +357,91 @@ export default function CheckoutPage() {
                   </div>
                 </div>
 
-                <button
-                  onClick={handlePay}
-                  disabled={loading}
-                  className="mt-5 w-full bg-amber-500 hover:bg-amber-600 disabled:bg-stone-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-full transition-all hover:shadow-lg hover:shadow-amber-200 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm"
-                >
-                  {loading ? (
-                    <span className="animate-pulse">Processing...</span>
-                  ) : (
-                    <>
-                      <Lock size={16} />
-                      Pay {formatPrice(total)} securely
-                    </>
-                  )}
-                </button>
+                {/* Payment method */}
+                <div className="mt-5 grid grid-cols-2 gap-2 mb-4">
+                  <button
+                    onClick={() => setPayMethod('paystack')}
+                    className={`flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-semibold transition-colors ${
+                      payMethod === 'paystack'
+                        ? 'bg-amber-700 text-white border-amber-700'
+                        : 'bg-white text-stone-600 border-stone-200 hover:border-amber-400'
+                    }`}
+                  >
+                    <CreditCard size={15} /> Pay Online
+                  </button>
+                  <button
+                    onClick={() => setPayMethod('transfer')}
+                    className={`flex items-center justify-center gap-2 py-2.5 rounded-xl border text-sm font-semibold transition-colors ${
+                      payMethod === 'transfer'
+                        ? 'bg-amber-700 text-white border-amber-700'
+                        : 'bg-white text-stone-600 border-stone-200 hover:border-amber-400'
+                    }`}
+                  >
+                    <Banknote size={15} /> Bank Transfer
+                  </button>
+                </div>
 
-                <p className="text-center text-xs text-stone-400 mt-3 flex items-center justify-center gap-1">
-                  <Lock size={11} />
-                  Secured by Paystack
-                </p>
+                {payMethod === 'paystack' ? (
+                  <>
+                    <button
+                      onClick={handlePay}
+                      disabled={loading}
+                      className="w-full bg-amber-500 hover:bg-amber-600 disabled:bg-stone-300 disabled:cursor-not-allowed text-white font-bold py-4 rounded-full transition-all hover:shadow-lg hover:shadow-amber-200 hover:-translate-y-0.5 flex items-center justify-center gap-2 text-sm"
+                    >
+                      {loading ? <span className="animate-pulse">Processing...</span> : <><Lock size={16} /> Pay {formatPrice(total)} securely</>}
+                    </button>
+                    <p className="text-center text-xs text-stone-400 mt-3 flex items-center justify-center gap-1">
+                      <Lock size={11} /> Secured by Paystack
+                    </p>
+                  </>
+                ) : (
+                  <div className="space-y-3">
+                    {/* Bank details */}
+                    <div className="bg-amber-50 rounded-2xl p-4 border border-amber-200 space-y-2">
+                      <p className="text-xs font-bold text-stone-700 uppercase tracking-widest mb-2">Transfer to</p>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-stone-500">Bank</span>
+                        <span className="font-semibold text-stone-800">{process.env.NEXT_PUBLIC_BANK_NAME ?? 'See WhatsApp'}</span>
+                      </div>
+                      <div className="flex justify-between text-sm">
+                        <span className="text-stone-500">Account Name</span>
+                        <span className="font-semibold text-stone-800">{process.env.NEXT_PUBLIC_BANK_ACCOUNT_NAME ?? 'PopMerry Foods'}</span>
+                      </div>
+                      <div className="flex justify-between items-center text-sm">
+                        <span className="text-stone-500">Account No.</span>
+                        <div className="flex items-center gap-2">
+                          <span className="font-bold text-stone-900 font-mono">{process.env.NEXT_PUBLIC_BANK_ACCOUNT_NUMBER ?? '—'}</span>
+                          <button onClick={copyAccount} className="text-amber-600 hover:text-amber-800">
+                            {copied ? <CheckCircle size={14} /> : <Copy size={14} />}
+                          </button>
+                        </div>
+                      </div>
+                      <div className="flex justify-between text-sm pt-1 border-t border-amber-200">
+                        <span className="text-stone-500">Amount</span>
+                        <span className="font-bold text-amber-700">{formatPrice(total)}</span>
+                      </div>
+                    </div>
+
+                    <div>
+                      <label className="block text-xs font-semibold text-stone-600 mb-1.5">Transfer Reference / Narration <span className="text-stone-400 font-normal">(optional)</span></label>
+                      <input
+                        value={transferRef}
+                        onChange={e => setTransferRef(e.target.value)}
+                        placeholder="e.g. PopMerry order payment"
+                        className="w-full border border-stone-200 rounded-xl px-3 py-2.5 text-sm focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent"
+                      />
+                    </div>
+
+                    <button
+                      onClick={handleTransfer}
+                      disabled={loading}
+                      className="w-full bg-stone-800 hover:bg-stone-900 disabled:bg-stone-300 text-white font-bold py-4 rounded-full transition-all flex items-center justify-center gap-2 text-sm"
+                    >
+                      {loading ? <span className="animate-pulse">Placing order...</span> : <><Banknote size={16} /> Place Order & Pay by Transfer</>}
+                    </button>
+                    <p className="text-center text-xs text-stone-400">Your order will be confirmed once we receive your payment. We&apos;ll contact you on WhatsApp.</p>
+                  </div>
+                )}
               </div>
             </div>
           </div>
