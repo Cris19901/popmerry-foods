@@ -39,9 +39,10 @@ export default function Footer() {
 
           {/* Menu */}
           <div>
-            <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Menu</h3>
+            <h3 className="text-white font-semibold mb-4 text-sm uppercase tracking-wider">Quick Links</h3>
             <ul className="space-y-2.5 text-sm">
               {[
+                { href: '/about', label: 'About Us' },
                 { href: '/products?cat=banana-cake', label: 'Banana Cakes' },
                 { href: '/products?cat=croissant', label: 'Croissants' },
                 { href: '/products?cat=popcorn', label: 'Popcorn' },

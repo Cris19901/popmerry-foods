@@ -2,14 +2,18 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, ShoppingBag, ClipboardList, Package, LogOut } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, ClipboardList, Package, Users, LogOut } from 'lucide-react';
 
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/orders', label: 'Orders', icon: ShoppingBag, exact: false },
   { href: '/admin/custom-orders', label: 'Custom', icon: ClipboardList, exact: false },
   { href: '/admin/products', label: 'Products', icon: Package, exact: false },
+  { href: '/admin/customers', label: 'Customers', icon: Users, exact: false },
 ];
+
+// Bottom nav limited to 4 primary items to avoid crowding on mobile
+const BOTTOM_NAV = NAV.slice(0, 4);
 
 export default function AdminSidebar() {
   const pathname = usePathname();
@@ -94,7 +98,7 @@ export default function AdminSidebar() {
 
       {/* ── Mobile bottom nav bar ─────────────────────── */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1A0800] border-t border-white/10 flex items-stretch">
-        {NAV.map(({ href, label, icon: Icon, exact }) => {
+        {BOTTOM_NAV.map(({ href, label, icon: Icon, exact }) => {
           const active = isActive(href, exact);
           return (
             <Link
