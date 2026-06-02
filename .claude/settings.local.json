@@ -12,7 +12,17 @@
       "PowerShell(taskkill /PID 24816 /F)",
       "PowerShell(Start-Process -NoNewWindow -FilePath \"cmd\" -ArgumentList \"/c\", \"cd /d `\"c:\\\\Users\\\\FADIPE TIMOTHY\\\\OneDrive\\\\Documents\\\\baking`\" && npm run dev\")",
       "PowerShell(netstat -ano)",
-      "PowerShell(Get-Process -Id 27720)"
+      "PowerShell(Get-Process -Id 27720)",
+      "Bash(git add *)",
+      "Bash(git commit -m ' *)",
+      "Bash(git push *)",
+      "mcp__claude_ai_Vercel__list_teams",
+      "mcp__claude_ai_Vercel__list_projects",
+      "mcp__claude_ai_Vercel__get_project",
+      "mcp__claude_ai_Vercel__check_domain_availability_and_price",
+      "WebSearch",
+      "WebFetch(domain:images.unsplash.com)",
+      "WebFetch(domain:unsplash.com)"
     ]
   }
 }

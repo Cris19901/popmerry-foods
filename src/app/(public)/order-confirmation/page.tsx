@@ -107,8 +107,8 @@ async function ConfirmationContent({ orderId }: { orderId?: string }) {
           <MessageCircle size={20} className="text-green-600 flex-shrink-0" />
           <p className="text-sm text-green-800">
             Questions? WhatsApp us at{' '}
-            <a href="https://wa.me/234XXXXXXXXXX" className="font-bold underline">
-              +234 XXX XXX XXXX
+            <a href="https://wa.me/2347039571698" className="font-bold underline">
+              +234 703 957 1698
             </a>
           </p>
         </div>
