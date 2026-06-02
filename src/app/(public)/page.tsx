@@ -6,6 +6,30 @@ import { getProducts } from '@/lib/products-db';
 
 const FEATURED_IDS = ['bc-classic', 'cr-butter', 'pc-classic', 'bn-morning'];
 
+const localBusinessSchema = {
+  '@context': 'https://schema.org',
+  '@type': 'Bakery',
+  name: 'PopMerry Foods',
+  description: 'Handcrafted banana cakes, artisan croissants, and freshly popped popcorn made daily in Lagos.',
+  url: 'https://popmerryfoods.com.ng',
+  telephone: '+2347039571698',
+  email: 'hello@popmerryfoods.com.ng',
+  address: {
+    '@type': 'PostalAddress',
+    addressLocality: 'Lagos',
+    addressRegion: 'Lagos State',
+    addressCountry: 'NG',
+  },
+  areaServed: [
+    'Lagos Island', 'Lagos Mainland', 'Ibadan', 'Ilorin',
+    'Osun', 'Ogun', 'Oyo Town', 'Ogbomosho',
+  ],
+  servesCuisine: ['Baked Goods', 'Cakes', 'Croissants', 'Popcorn'],
+  openingHours: 'Mo-Sa 07:00-19:00',
+  priceRange: '₦₦',
+  sameAs: ['https://instagram.com/popmerryfoods'],
+};
+
 export default async function HomePage() {
   const allProducts = await getProducts();
   const featuredProducts = allProducts
@@ -14,6 +38,11 @@ export default async function HomePage() {
 
   return (
     <>
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(localBusinessSchema) }}
+      />
+
       {/* ─── HERO ─────────────────────────────────────────────── */}
       <section className="relative min-h-screen flex items-center justify-center overflow-hidden hero-gradient">
         {/* Decorative blobs */}

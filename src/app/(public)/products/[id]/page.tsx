@@ -59,8 +59,30 @@ export default async function ProductDetailPage({ params }: Props) {
     : product.category === 'popcorn' ? 'Popcorn'
     : 'Bundle Deals';
 
+  const productSchema = {
+    '@context': 'https://schema.org',
+    '@type': 'Product',
+    name: product.name,
+    description: product.description,
+    image: imageUrl,
+    brand: { '@type': 'Brand', name: 'PopMerry Foods' },
+    offers: {
+      '@type': 'Offer',
+      price: product.price,
+      priceCurrency: 'NGN',
+      availability: product.isAvailable
+        ? 'https://schema.org/InStock'
+        : 'https://schema.org/OutOfStock',
+      seller: { '@type': 'Organization', name: 'PopMerry Foods' },
+    },
+  };
+
   return (
     <div className="min-h-screen bg-[#FFFAF0]">
+      <script
+        type="application/ld+json"
+        dangerouslySetInnerHTML={{ __html: JSON.stringify(productSchema) }}
+      />
       {/* Hero image */}
       <div className="relative w-full h-[55vh] overflow-hidden">
         <div
