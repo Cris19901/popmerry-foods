@@ -84,10 +84,10 @@ export default function Footer() {
 
         <div className="border-t border-stone-800 mt-12 pt-8 flex flex-col sm:flex-row items-center justify-between gap-4 text-xs text-stone-500">
           <p>© {new Date().getFullYear()} PopMerry Foods. All rights reserved.</p>
-          <div className="flex items-center gap-1">
-            <span>Made with</span>
-            <span className="text-red-400">♥</span>
-            <span>and the freshest ingredients.</span>
+          <div className="flex flex-wrap items-center justify-center gap-4">
+            <Link href="/privacy-policy" className="hover:text-stone-300 transition-colors">Privacy Policy</Link>
+            <Link href="/terms" className="hover:text-stone-300 transition-colors">Terms & Conditions</Link>
+            <Link href="/refund-policy" className="hover:text-stone-300 transition-colors">Refund Policy</Link>
           </div>
         </div>
       </div>
