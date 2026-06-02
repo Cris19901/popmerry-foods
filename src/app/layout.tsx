@@ -16,9 +16,12 @@ export const metadata: Metadata = {
   description:
     'Handcrafted banana cakes, artisan croissants, and freshly popped popcorn made daily in Lagos. Order online for fast delivery to your door.',
   keywords: ['banana cake', 'croissant', 'popcorn', 'bakery', 'fresh baked', 'Lagos', 'Nigeria', 'delivery'],
+  metadataBase: new URL('https://popmerryfoods.com.ng'),
+  alternates: { canonical: 'https://popmerryfoods.com.ng' },
   openGraph: {
     title: 'PopMerry Foods — Cakes, Croissants & Popcorn',
     description: 'Handcrafted banana cakes, artisan croissants, and freshly popped popcorn made daily. Order now.',
+    url: 'https://popmerryfoods.com.ng',
     type: 'website',
     siteName: 'PopMerry Foods',
   },

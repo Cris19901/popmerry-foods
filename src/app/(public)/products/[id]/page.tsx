@@ -22,15 +22,21 @@ export async function generateMetadata({ params }: Props) {
 
   const title = `${product.name} — PopMerry Foods`;
   const description = product.description;
-  const imageUrl = `https://images.unsplash.com/photo-${product.imageId}?auto=format&fit=crop&w=1200&h=630&q=80`;
+  const canonicalUrl = `https://popmerryfoods.com.ng/products/${id}`;
+  const imageUrl = product.imageId
+    ? `https://images.unsplash.com/photo-${product.imageId}?auto=format&fit=crop&w=1200&h=630&q=80`
+    : 'https://popmerryfoods.com.ng/og-default.jpg';
 
   return {
     title,
     description,
+    alternates: { canonical: canonicalUrl },
     openGraph: {
       title,
       description,
-      images: [{ url: imageUrl, width: 1200, height: 630 }],
+      url: canonicalUrl,
+      siteName: 'PopMerry Foods',
+      images: [{ url: imageUrl, width: 1200, height: 630, alt: product.name }],
       type: 'website',
     },
     twitter: {
