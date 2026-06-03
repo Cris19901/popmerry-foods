@@ -344,7 +344,9 @@ export default async function HomePage() {
       </section>
 
       {/* ─── TESTIMONIALS ─────────────────────────────────────── */}
-      <Testimonials />
+      <div id="reviews">
+        <Testimonials />
+      </div>
     </>
   );
 }

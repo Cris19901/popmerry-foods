@@ -113,7 +113,7 @@ async function ConfirmationContent({ orderId }: { orderId?: string }) {
           </p>
         </div>
 
-        <div className="flex flex-col sm:flex-row gap-3 justify-center">
+        <div className="flex flex-col sm:flex-row gap-3 justify-center mb-8">
           <Link
             href="/products"
             className="inline-flex items-center justify-center gap-2 bg-amber-700 hover:bg-amber-800 text-white font-bold px-6 py-3.5 rounded-full transition-all hover:shadow-lg hover:shadow-amber-200 text-sm"
@@ -125,6 +125,18 @@ async function ConfirmationContent({ orderId }: { orderId?: string }) {
             className="inline-flex items-center justify-center gap-2 border-2 border-stone-200 text-stone-700 font-semibold px-6 py-3.5 rounded-full hover:border-amber-300 hover:text-amber-700 transition-colors text-sm"
           >
             Back to Home
+          </Link>
+        </div>
+
+        {/* Review prompt */}
+        <div className="bg-amber-50 border border-amber-200 rounded-2xl p-5 text-center">
+          <p className="text-stone-700 text-sm font-semibold mb-1">Enjoying your order? ⭐</p>
+          <p className="text-stone-500 text-xs mb-3">Leave a quick review — it helps other customers and means the world to us.</p>
+          <Link
+            href="/#reviews"
+            className="inline-flex items-center gap-1.5 text-amber-700 font-bold text-sm hover:underline"
+          >
+            Leave a Review <ArrowRight size={14} />
           </Link>
         </div>
       </div>
