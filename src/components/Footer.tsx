@@ -44,7 +44,6 @@ export default function Footer() {
               {[
                 { href: '/about', label: 'About Us' },
                 { href: '/blog', label: 'Blog' },
-                { href: '/blog', label: 'Blog' },
                 { href: '/products?cat=banana-cake', label: 'Banana Cakes' },
                 { href: '/products?cat=croissant', label: 'Croissants' },
                 { href: '/products?cat=popcorn', label: 'Popcorn' },
@@ -53,7 +52,7 @@ export default function Footer() {
                 { href: '/track-order', label: 'Track My Order' },
                 { href: '/catering', label: 'Corporate Catering' },
               ].map(({ href, label }) => (
-                <li key={href}>
+                <li key={label}>
                   <Link href={href} className="hover:text-amber-400 transition-colors">
                     {label}
                   </Link>
@@ -74,8 +73,8 @@ export default function Footer() {
               </li>
               <li>
                 <span className="block text-stone-500 text-xs mb-0.5">Email</span>
-                <a href="mailto:hello@popmerryfoods.com" className="hover:text-amber-400 transition-colors">
-                  hello@popmerryfoods.com
+                <a href="mailto:hello@popmerryfoods.com.ng" className="hover:text-amber-400 transition-colors">
+                  hello@popmerryfoods.com.ng
                 </a>
               </li>
               <li>
