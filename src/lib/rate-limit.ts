@@ -16,21 +16,20 @@ function inMemoryLimit(ip: string, limit: number, windowMs: number): boolean {
 // ── Upstash Redis limiter (used in production when env vars are set) ─────────
 let redisLimiter: Ratelimit | null = null;
 
-if (
-  process.env.UPSTASH_REDIS_REST_URL &&
-  process.env.UPSTASH_REDIS_REST_TOKEN
-) {
-  const redis = new Redis({
-    url: process.env.UPSTASH_REDIS_REST_URL,
-    token: process.env.UPSTASH_REDIS_REST_TOKEN,
-  });
-  // Default: 10 requests per 60 seconds sliding window
-  redisLimiter = new Ratelimit({
-    redis,
-    limiter: Ratelimit.slidingWindow(10, '60 s'),
-    analytics: true,
-    prefix: 'popmerry_rl',
-  });
+try {
+  const url = process.env.UPSTASH_REDIS_REST_URL;
+  const token = process.env.UPSTASH_REDIS_REST_TOKEN;
+  if (url && token && url.startsWith('https://')) {
+    const redis = new Redis({ url, token });
+    redisLimiter = new Ratelimit({
+      redis,
+      limiter: Ratelimit.slidingWindow(10, '60 s'),
+      analytics: true,
+      prefix: 'popmerry_rl',
+    });
+  }
+} catch {
+  // Upstash unavailable — fall back to in-memory limiter silently
 }
 
 // ── Public helper ─────────────────────────────────────────────────────────────
