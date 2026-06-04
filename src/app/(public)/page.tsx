@@ -3,6 +3,7 @@ import Image from 'next/image';
 import { ArrowRight, Sparkles, Clock, Star, Package, Flame, Heart } from 'lucide-react';
 import ProductCard from '@/components/ProductCard';
 import Testimonials from '@/components/Testimonials';
+import NewsletterForm from '@/components/NewsletterForm';
 import { getProducts } from '@/lib/products-db';
 
 const FEATURED_IDS = ['bc-classic', 'cr-butter', 'pc-classic', 'bn-morning'];
@@ -317,28 +318,7 @@ export default async function HomePage() {
           <p className="text-amber-100 text-sm mb-6 leading-relaxed">
             Be the first to hear about new flavours, seasonal specials, and exclusive discounts.
           </p>
-          <form
-            onSubmit={e => {
-              e.preventDefault();
-              const email = (e.currentTarget.elements.namedItem('email') as HTMLInputElement).value;
-              window.open(`https://wa.me/2347039571698?text=${encodeURIComponent(`Hi! I'd like to join the PopMerry Foods mailing list: ${email}`)}`, '_blank');
-            }}
-            className="flex flex-col sm:flex-row gap-3"
-          >
-            <input
-              name="email"
-              type="email"
-              required
-              placeholder="your@email.com"
-              className="flex-1 px-5 py-3.5 rounded-full text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-white text-sm"
-            />
-            <button
-              type="submit"
-              className="bg-[#1A0800] hover:bg-stone-900 text-white font-bold px-6 py-3.5 rounded-full transition-colors text-sm whitespace-nowrap"
-            >
-              Notify Me
-            </button>
-          </form>
+          <NewsletterForm />
           <p className="text-amber-200/70 text-xs mt-3">No spam. Unsubscribe anytime.</p>
         </div>
       </section>
