@@ -6,7 +6,7 @@ const COOKIE = 'admin_token';
 const SESSION_HOURS = 8;
 const REFRESH_THRESHOLD_HOURS = 2;
 
-export async function middleware(req: NextRequest) {
+export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
