@@ -50,6 +50,7 @@ export default function Footer() {
                 { href: '/products?cat=bundle', label: 'Bundle Deals' },
                 { href: '/custom-order', label: 'Custom Orders' },
                 { href: '/track-order', label: 'Track My Order' },
+                { href: '/refer', label: 'Refer & Earn' },
                 { href: '/catering', label: 'Corporate Catering' },
               ].map(({ href, label }) => (
                 <li key={label}>

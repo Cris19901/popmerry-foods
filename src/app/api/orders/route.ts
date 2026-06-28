@@ -23,6 +23,8 @@ const orderSchema = z.object({
   subtotal: z.number().positive(),
   deliveryFee: z.number().min(0),
   total: z.number().positive(),
+  promoCode: z.string().max(50).optional(),
+  promoKind: z.enum(['promo', 'referral']).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -42,8 +44,11 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { customer, items, subtotal, deliveryFee, total } = parsed.data;
+    const { customer, items, subtotal, deliveryFee, total, promoCode, promoKind } = parsed.data;
     const supabase = getSupabaseAdmin();
+
+    const isReferral = promoKind === 'referral';
+    const isPromo = promoCode && promoKind !== 'referral';
 
     const { data, error } = await supabase
       .from('orders')
@@ -58,6 +63,8 @@ export async function POST(req: NextRequest) {
         delivery_fee: deliveryFee,
         total,
         status: 'pending',
+        promo_code: isPromo ? promoCode : null,
+        referral_code: isReferral ? promoCode : null,
       })
       .select('id')
       .single();
@@ -65,6 +72,27 @@ export async function POST(req: NextRequest) {
     if (error) {
       console.error('Supabase error:', error);
       return NextResponse.json({ error: 'Failed to save order' }, { status: 500 });
+    }
+
+    // Increment usage counters (best-effort, non-blocking on failure)
+    if (promoCode) {
+      try {
+        if (isReferral) {
+          // Don't credit self-referrals
+          const { data: ref } = await supabase
+            .from('referrals')
+            .select('referrer_email')
+            .ilike('code', promoCode)
+            .single();
+          if (ref && ref.referrer_email.toLowerCase() !== customer.email.toLowerCase()) {
+            await supabase.rpc('increment_referral_usage', { p_code: promoCode });
+          }
+        } else {
+          await supabase.rpc('increment_promo_usage', { p_code: promoCode });
+        }
+      } catch (e) {
+        console.error('Usage increment failed:', e);
+      }
     }
 
     return NextResponse.json({ orderId: data.id });

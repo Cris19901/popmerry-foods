@@ -29,8 +29,30 @@ export async function POST(req: NextRequest) {
     .ilike('code', code)
     .single();
 
-  if (!promo || !promo.is_active) {
-    return NextResponse.json({ error: 'Invalid promo code' }, { status: 404 });
+  // If it's not a promo code, check if it's a referral code
+  if (!promo) {
+    const { data: referral } = await db
+      .from('referrals')
+      .select('code, referee_discount')
+      .ilike('code', code)
+      .single();
+
+    if (referral) {
+      const discount = Math.min(referral.referee_discount, subtotal);
+      return NextResponse.json({
+        valid: true,
+        kind: 'referral',
+        code: referral.code,
+        discount,
+        description: `Referral reward — ₦${referral.referee_discount.toLocaleString()} off`,
+      });
+    }
+
+    return NextResponse.json({ error: 'Invalid code' }, { status: 404 });
+  }
+
+  if (!promo.is_active) {
+    return NextResponse.json({ error: 'This promo code is no longer active' }, { status: 404 });
   }
 
   if (promo.expires_at && new Date(promo.expires_at) < new Date()) {
@@ -53,6 +75,7 @@ export async function POST(req: NextRequest) {
 
   return NextResponse.json({
     valid: true,
+    kind: 'promo',
     code: promo.code,
     discountType: promo.discount_type,
     discountValue: promo.discount_value,

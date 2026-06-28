@@ -1,6 +1,6 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { useRouter } from 'next/navigation';
 import { Trash2, Minus, Plus, Lock, ArrowLeft, Tag, X, Banknote, CreditCard, Copy, CheckCircle } from 'lucide-react';
 import Link from 'next/link';
@@ -26,35 +26,50 @@ export default function CheckoutPage() {
   const subtotal = getTotal();
   const deliveryFee = calcDeliveryFee(subtotal);
 
-  const [promo, setPromo] = useState<{ code: string; discount: number; description: string } | null>(null);
+  const [promo, setPromo] = useState<{ code: string; discount: number; description: string; kind: 'promo' | 'referral' } | null>(null);
   const [promoInput, setPromoInput] = useState('');
   const [promoLoading, setPromoLoading] = useState(false);
 
   const discount = promo?.discount ?? 0;
   const total = subtotal + deliveryFee - discount;
 
-  const applyPromo = async () => {
-    if (!promoInput.trim()) return;
+  const applyPromo = async (codeArg?: string, silent = false) => {
+    const code = (codeArg ?? promoInput).trim().toUpperCase();
+    if (!code) return;
     setPromoLoading(true);
     try {
       const res = await fetch('/api/promo/validate', {
         method: 'POST',
         headers: { 'Content-Type': 'application/json' },
-        body: JSON.stringify({ code: promoInput.trim().toUpperCase(), subtotal }),
+        body: JSON.stringify({ code, subtotal }),
       });
       const data = await res.json();
       if (!res.ok) {
-        toast.error(data.error ?? 'Invalid promo code');
+        if (!silent) toast.error(data.error ?? 'Invalid promo code');
       } else {
-        setPromo({ code: data.code, discount: data.discount, description: data.description });
+        setPromo({ code: data.code, discount: data.discount, description: data.description, kind: data.kind ?? 'promo' });
+        setPromoInput(data.code);
         toast.success(`Code applied! You saved ${formatPrice(data.discount)} 🎉`);
       }
     } catch {
-      toast.error('Could not apply code. Try again.');
+      if (!silent) toast.error('Could not apply code. Try again.');
     } finally {
       setPromoLoading(false);
     }
   };
+
+  // Auto-apply a referral code captured from a ?ref= link
+  const autoApplied = useRef(false);
+  useEffect(() => {
+    if (autoApplied.current || promo || items.length === 0) return;
+    let ref: string | null = null;
+    try { ref = localStorage.getItem('popmerry_ref'); } catch {}
+    if (ref) {
+      autoApplied.current = true;
+      applyPromo(ref, true);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [items.length]);
 
   const [payMethod, setPayMethod] = useState<'paystack' | 'transfer'>('paystack');
   const [transferRef, setTransferRef] = useState('');
@@ -92,10 +107,11 @@ export default function CheckoutPage() {
     const res = await fetch('/api/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ customer: form, items, subtotal, deliveryFee, discount, total, promoCode: promo?.code }),
+      body: JSON.stringify({ customer: form, items, subtotal, deliveryFee, discount, total, promoCode: promo?.code, promoKind: promo?.kind }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error('Failed to create order');
+    try { localStorage.removeItem('popmerry_ref'); } catch {}
     return data.orderId as string;
   };
 
@@ -322,7 +338,7 @@ export default function CheckoutPage() {
                         className="flex-1 border border-stone-200 rounded-xl px-3 py-2 text-sm text-stone-900 placeholder:text-stone-400 focus:outline-none focus:ring-2 focus:ring-amber-400 focus:border-transparent uppercase"
                       />
                       <button
-                        onClick={applyPromo}
+                        onClick={() => applyPromo()}
                         disabled={promoLoading || !promoInput}
                         className="text-xs font-bold text-amber-700 hover:text-amber-800 border border-amber-300 hover:border-amber-500 px-3 py-2 rounded-xl transition-colors disabled:opacity-50"
                       >

@@ -17,12 +17,16 @@ type Promo = {
   used_count: number;
   expires_at: string | null;
   is_active: boolean;
+  is_influencer?: boolean;
+  influencer_name?: string | null;
   created_at: string;
 };
 
+type Stats = Record<string, { orders: number; revenue: number }>;
+
 const inputCls = 'w-full border border-stone-200 rounded-xl px-3.5 py-2.5 text-sm text-stone-800 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500';
 
-export default function PromosAdminClient({ promos: initial }: { promos: Promo[] }) {
+export default function PromosAdminClient({ promos: initial, stats }: { promos: Promo[]; stats: Stats }) {
   const router = useRouter();
   const [promos, setPromos] = useState(initial);
   const [showForm, setShowForm] = useState(false);
@@ -35,6 +39,7 @@ export default function PromosAdminClient({ promos: initial }: { promos: Promo[]
     min_order: '',
     max_uses: '',
     expires_at: '',
+    influencer_name: '',
   });
 
   const set = (k: string, v: string) => setForm(f => ({ ...f, [k]: v }));
@@ -58,6 +63,8 @@ export default function PromosAdminClient({ promos: initial }: { promos: Promo[]
           min_order: form.min_order ? parseInt(form.min_order) : 0,
           max_uses: form.max_uses ? parseInt(form.max_uses) : null,
           expires_at: form.expires_at || null,
+          influencer_name: form.influencer_name.trim() || null,
+          is_influencer: !!form.influencer_name.trim(),
         }),
       });
       if (res.ok) {
@@ -153,6 +160,12 @@ export default function PromosAdminClient({ promos: initial }: { promos: Promo[]
                 <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-1.5">Expires At</label>
                 <input type="datetime-local" value={form.expires_at} onChange={e => set('expires_at', e.target.value)} className={inputCls} />
               </div>
+              <div>
+                <label className="block text-xs font-semibold text-stone-500 uppercase tracking-wider mb-1.5">
+                  Influencer / Affiliate <span className="text-stone-400 normal-case font-normal">(optional)</span>
+                </label>
+                <input value={form.influencer_name} onChange={e => set('influencer_name', e.target.value)} placeholder="e.g. @chioma_eats" className={inputCls} />
+              </div>
             </div>
             <div className="flex gap-3 pt-2">
               <button type="button" onClick={() => setShowForm(false)} className="flex-1 py-2.5 border border-stone-200 rounded-xl text-stone-600 text-sm font-semibold hover:bg-stone-50">Cancel</button>
@@ -176,43 +189,53 @@ export default function PromosAdminClient({ promos: initial }: { promos: Promo[]
             <table className="w-full text-sm">
               <thead className="bg-stone-50 border-b border-stone-200">
                 <tr>
-                  {['Code', 'Discount', 'Min Order', 'Uses', 'Expires', 'Status', ''].map(h => (
+                  {['Code', 'Discount', 'Uses', 'Paid Orders', 'Revenue', 'Status', ''].map(h => (
                     <th key={h} className="text-left px-5 py-3 text-xs font-semibold text-stone-500 uppercase tracking-wider">{h}</th>
                   ))}
                 </tr>
               </thead>
               <tbody className="divide-y divide-stone-100">
-                {promos.map(p => (
-                  <tr key={p.id} className="hover:bg-stone-50">
-                    <td className="px-5 py-4">
-                      <p className="font-bold text-stone-900 font-mono">{p.code}</p>
-                      {p.description && <p className="text-stone-400 text-xs mt-0.5">{p.description}</p>}
-                    </td>
-                    <td className="px-5 py-4 font-semibold text-amber-700">
-                      {p.discount_type === 'percent' ? `${p.discount_value}%` : formatPrice(p.discount_value)}
-                    </td>
-                    <td className="px-5 py-4 text-stone-600 text-xs">
-                      {p.min_order > 0 ? formatPrice(p.min_order) : '—'}
-                    </td>
-                    <td className="px-5 py-4 text-stone-600 text-xs">
-                      {p.used_count}{p.max_uses ? ` / ${p.max_uses}` : ' / ∞'}
-                    </td>
-                    <td className="px-5 py-4 text-stone-500 text-xs">
-                      {p.expires_at ? new Date(p.expires_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' }) : 'Never'}
-                    </td>
-                    <td className="px-5 py-4">
-                      <button onClick={() => toggleActive(p)} className={`flex items-center gap-1.5 text-xs font-semibold ${p.is_active ? 'text-green-600' : 'text-stone-400'}`}>
-                        {p.is_active ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
-                        {p.is_active ? 'Active' : 'Inactive'}
-                      </button>
-                    </td>
-                    <td className="px-5 py-4">
-                      <button onClick={() => deletePromo(p.id)} className="p-1.5 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
-                        <Trash2 size={14} />
-                      </button>
-                    </td>
-                  </tr>
-                ))}
+                {promos.map(p => {
+                  const s = stats[p.code.toUpperCase()] ?? { orders: 0, revenue: 0 };
+                  return (
+                    <tr key={p.id} className="hover:bg-stone-50">
+                      <td className="px-5 py-4">
+                        <div className="flex items-center gap-2">
+                          <p className="font-bold text-stone-900 font-mono">{p.code}</p>
+                          {p.is_influencer && (
+                            <span className="text-[10px] font-bold bg-purple-100 text-purple-700 px-2 py-0.5 rounded-full whitespace-nowrap">
+                              {p.influencer_name || 'Influencer'}
+                            </span>
+                          )}
+                        </div>
+                        {p.description && <p className="text-stone-400 text-xs mt-0.5">{p.description}</p>}
+                      </td>
+                      <td className="px-5 py-4 font-semibold text-amber-700">
+                        {p.discount_type === 'percent' ? `${p.discount_value}%` : formatPrice(p.discount_value)}
+                      </td>
+                      <td className="px-5 py-4 text-stone-600 text-xs">
+                        {p.used_count}{p.max_uses ? ` / ${p.max_uses}` : ' / ∞'}
+                      </td>
+                      <td className="px-5 py-4 text-stone-800 text-sm font-semibold">
+                        {s.orders}
+                      </td>
+                      <td className="px-5 py-4 text-green-700 text-sm font-bold">
+                        {s.revenue > 0 ? formatPrice(s.revenue) : '—'}
+                      </td>
+                      <td className="px-5 py-4">
+                        <button onClick={() => toggleActive(p)} className={`flex items-center gap-1.5 text-xs font-semibold ${p.is_active ? 'text-green-600' : 'text-stone-400'}`}>
+                          {p.is_active ? <ToggleRight size={18} /> : <ToggleLeft size={18} />}
+                          {p.is_active ? 'Active' : 'Inactive'}
+                        </button>
+                      </td>
+                      <td className="px-5 py-4">
+                        <button onClick={() => deletePromo(p.id)} className="p-1.5 text-stone-400 hover:text-red-600 hover:bg-red-50 rounded-lg transition-colors">
+                          <Trash2 size={14} />
+                        </button>
+                      </td>
+                    </tr>
+                  );
+                })}
               </tbody>
             </table>
           </div>

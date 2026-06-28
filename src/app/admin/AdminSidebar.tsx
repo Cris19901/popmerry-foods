@@ -2,7 +2,7 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, ShoppingBag, ClipboardList, Package, Users, Tag, Star, LogOut } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, ClipboardList, Package, Users, Tag, Star, Gift, LogOut } from 'lucide-react';
 
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
@@ -11,6 +11,7 @@ const NAV = [
   { href: '/admin/products', label: 'Products', icon: Package, exact: false },
   { href: '/admin/customers', label: 'Customers', icon: Users, exact: false },
   { href: '/admin/promos', label: 'Promo Codes', icon: Tag, exact: false },
+  { href: '/admin/referrals', label: 'Referrals', icon: Gift, exact: false },
   { href: '/admin/reviews', label: 'Reviews', icon: Star, exact: false },
 ];
 

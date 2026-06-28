@@ -10,6 +10,8 @@ const createSchema = z.object({
   min_order: z.number().int().min(0).default(0),
   max_uses: z.number().int().min(1).nullable().default(null),
   expires_at: z.string().nullable().default(null),
+  is_influencer: z.boolean().default(false),
+  influencer_name: z.string().max(100).nullable().default(null),
 });
 
 export async function POST(req: NextRequest) {
