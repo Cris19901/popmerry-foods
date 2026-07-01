@@ -9,6 +9,20 @@ const REFRESH_THRESHOLD_HOURS = 2;
 export async function proxy(req: NextRequest) {
   const { pathname } = req.nextUrl;
 
+  // Protect admin API routes (except the login/logout endpoint) → 401 JSON
+  if (pathname.startsWith('/api/admin') && !pathname.startsWith('/api/admin/auth')) {
+    const token = req.cookies.get(COOKIE)?.value;
+    if (!token) {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+    try {
+      await jwtVerify(token, secret);
+      return NextResponse.next();
+    } catch {
+      return NextResponse.json({ error: 'Unauthorized' }, { status: 401 });
+    }
+  }
+
   if (pathname.startsWith('/admin') && !pathname.startsWith('/admin/login')) {
     const token = req.cookies.get(COOKIE)?.value;
 
@@ -49,5 +63,5 @@ export async function proxy(req: NextRequest) {
 }
 
 export const config = {
-  matcher: ['/admin', '/admin/:path*'],
+  matcher: ['/admin', '/admin/:path*', '/api/admin/:path*'],
 };
