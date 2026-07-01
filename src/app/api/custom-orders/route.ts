@@ -3,6 +3,12 @@ import { z } from 'zod';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { rateLimit } from '@/lib/rate-limit';
 
+const selectedOptionSchema = z.object({
+  group_name: z.string().max(40),
+  name: z.string().max(60),
+  price_delta: z.number().int().min(0),
+});
+
 const customOrderSchema = z.object({
   name: z.string().min(1).max(100),
   email: z.string().email(),
@@ -13,6 +19,8 @@ const customOrderSchema = z.object({
   croissantQuantity: z.string().max(200).optional(),
   popcornQuantity: z.string().max(200).optional(),
   specialRequirements: z.string().max(2000).optional(),
+  selectedOptions: z.array(selectedOptionSchema).max(50).optional(),
+  estimatedPrice: z.number().int().min(0).max(10_000_000).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -32,7 +40,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { name, email, phone, eventType, eventDate, cakeQuantity, croissantQuantity, popcornQuantity, specialRequirements } = parsed.data;
+    const { name, email, phone, eventType, eventDate, cakeQuantity, croissantQuantity, popcornQuantity, specialRequirements, selectedOptions, estimatedPrice } = parsed.data;
     const supabase = getSupabaseAdmin();
 
     const { error } = await supabase.from('custom_order_requests').insert({
@@ -45,6 +53,8 @@ export async function POST(req: NextRequest) {
       croissant_quantity: croissantQuantity ?? null,
       popcorn_quantity: popcornQuantity ?? null,
       special_requirements: specialRequirements ?? null,
+      selected_options: selectedOptions && selectedOptions.length ? selectedOptions : null,
+      estimated_price: estimatedPrice ?? null,
       status: 'new',
     });
 

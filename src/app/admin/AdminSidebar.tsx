@@ -2,12 +2,13 @@
 
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, ShoppingBag, ClipboardList, Package, Users, Tag, Star, Gift, LogOut } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, ClipboardList, Package, Cake, Users, Tag, Star, Gift, LogOut } from 'lucide-react';
 
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
   { href: '/admin/orders', label: 'Orders', icon: ShoppingBag, exact: false },
   { href: '/admin/custom-orders', label: 'Custom', icon: ClipboardList, exact: false },
+  { href: '/admin/custom-cake', label: 'Custom Cake', icon: Cake, exact: false },
   { href: '/admin/products', label: 'Products', icon: Package, exact: false },
   { href: '/admin/customers', label: 'Customers', icon: Users, exact: false },
   { href: '/admin/promos', label: 'Promo Codes', icon: Tag, exact: false },

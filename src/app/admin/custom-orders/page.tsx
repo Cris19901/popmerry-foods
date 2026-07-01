@@ -1,5 +1,8 @@
 import { getSupabaseAdmin } from '@/lib/supabase';
+import { formatPrice } from '@/lib/products-data';
 import CustomOrderStatusSelect from './CustomOrderStatusSelect';
+
+type SelectedOption = { group_name: string; name: string; price_delta: number };
 
 async function getCustomOrders() {
   const db = getSupabaseAdmin();
@@ -38,14 +41,11 @@ export default async function AdminCustomOrdersPage() {
                 <CustomOrderStatusSelect orderId={order.id} currentStatus={order.status ?? 'new'} />
               </div>
 
-              {/* Details grid */}
+              {/* Event + date */}
               <div className="grid grid-cols-2 gap-3 mb-4">
                 {[
                   { label: 'Event', value: order.event_type },
                   { label: 'Event Date', value: new Date(order.event_date).toLocaleDateString('en-NG', { day: 'numeric', month: 'long', year: 'numeric' }) },
-                  { label: 'Cakes', value: order.cake_quantity || '—' },
-                  { label: 'Croissants', value: order.croissant_quantity || '—' },
-                  { label: 'Popcorn', value: order.popcorn_quantity || '—' },
                 ].map(({ label, value }) => (
                   <div key={label} className="bg-stone-50 rounded-xl p-3">
                     <p className="text-stone-400 text-xs mb-0.5">{label}</p>
@@ -53,6 +53,44 @@ export default async function AdminCustomOrdersPage() {
                   </div>
                 ))}
               </div>
+
+              {/* Configured cake (new configurator orders) */}
+              {order.estimated_price != null && (
+                <div className="bg-amber-50 border border-amber-100 rounded-xl p-4 mb-4">
+                  <div className="flex items-center justify-between mb-2">
+                    <p className="text-stone-500 text-xs font-semibold uppercase tracking-wider">Configured Cake</p>
+                    <p className="font-display text-lg font-bold text-amber-700">{formatPrice(order.estimated_price)}</p>
+                  </div>
+                  {Array.isArray(order.selected_options) && order.selected_options.length > 0 ? (
+                    <div className="flex flex-wrap gap-1.5">
+                      {(order.selected_options as SelectedOption[]).map((o, i) => (
+                        <span key={i} className="text-xs bg-white border border-amber-200 text-stone-700 px-2.5 py-1 rounded-full">
+                          {o.group_name}: <span className="font-semibold">{o.name}</span>
+                          {o.price_delta > 0 && <span className="text-amber-600"> +{formatPrice(o.price_delta)}</span>}
+                        </span>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-stone-500 text-xs">Standard cake, no add-ons.</p>
+                  )}
+                </div>
+              )}
+
+              {/* Legacy quantity fields (older requests) */}
+              {(order.cake_quantity || order.croissant_quantity || order.popcorn_quantity) && (
+                <div className="grid grid-cols-3 gap-3 mb-4">
+                  {[
+                    { label: 'Cakes', value: order.cake_quantity },
+                    { label: 'Croissants', value: order.croissant_quantity },
+                    { label: 'Popcorn', value: order.popcorn_quantity },
+                  ].filter(f => f.value).map(({ label, value }) => (
+                    <div key={label} className="bg-stone-50 rounded-xl p-3">
+                      <p className="text-stone-400 text-xs mb-0.5">{label}</p>
+                      <p className="text-stone-800 text-sm font-medium">{value}</p>
+                    </div>
+                  ))}
+                </div>
+              )}
 
               {order.special_requirements && (
                 <div className="bg-amber-50 rounded-xl p-3 mb-4">
