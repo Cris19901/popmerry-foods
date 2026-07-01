@@ -1,3 +1,4 @@
+import Image from 'next/image';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { formatPrice } from '@/lib/products-data';
 import CustomOrderStatusSelect from './CustomOrderStatusSelect';
@@ -96,6 +97,20 @@ export default async function AdminCustomOrdersPage() {
                 <div className="bg-amber-50 rounded-xl p-3 mb-4">
                   <p className="text-stone-400 text-xs mb-0.5">Special Requirements</p>
                   <p className="text-stone-700 text-sm">{order.special_requirements}</p>
+                </div>
+              )}
+
+              {/* Reference / inspiration images */}
+              {Array.isArray(order.reference_images) && order.reference_images.length > 0 && (
+                <div className="mb-4">
+                  <p className="text-stone-400 text-xs mb-1.5">Inspiration Photos</p>
+                  <div className="flex flex-wrap gap-2">
+                    {(order.reference_images as string[]).map((url, i) => (
+                      <a key={i} href={url} target="_blank" rel="noopener noreferrer" className="relative w-16 h-16 rounded-lg overflow-hidden border border-stone-200 block">
+                        <Image src={url} alt={`Reference ${i + 1}`} fill className="object-cover" sizes="64px" />
+                      </a>
+                    ))}
+                  </div>
                 </div>
               )}
 

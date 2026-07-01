@@ -21,6 +21,7 @@ const customOrderSchema = z.object({
   specialRequirements: z.string().max(2000).optional(),
   selectedOptions: z.array(selectedOptionSchema).max(50).optional(),
   estimatedPrice: z.number().int().min(0).max(10_000_000).optional(),
+  referenceImages: z.array(z.string().url()).max(5).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -40,7 +41,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { name, email, phone, eventType, eventDate, cakeQuantity, croissantQuantity, popcornQuantity, specialRequirements, selectedOptions, estimatedPrice } = parsed.data;
+    const { name, email, phone, eventType, eventDate, cakeQuantity, croissantQuantity, popcornQuantity, specialRequirements, selectedOptions, estimatedPrice, referenceImages } = parsed.data;
     const supabase = getSupabaseAdmin();
 
     const { error } = await supabase.from('custom_order_requests').insert({
@@ -55,6 +56,7 @@ export async function POST(req: NextRequest) {
       special_requirements: specialRequirements ?? null,
       selected_options: selectedOptions && selectedOptions.length ? selectedOptions : null,
       estimated_price: estimatedPrice ?? null,
+      reference_images: referenceImages && referenceImages.length ? referenceImages : null,
       status: 'new',
     });
 

@@ -1,8 +1,9 @@
 'use client';
 
-import { useState, useMemo } from 'react';
+import { useState, useMemo, useRef } from 'react';
 import Link from 'next/link';
-import { ArrowLeft, CheckCircle, Copy, Banknote, MessageCircle } from 'lucide-react';
+import Image from 'next/image';
+import { ArrowLeft, CheckCircle, Copy, Banknote, MessageCircle, ImagePlus, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { formatPrice } from '@/lib/products-data';
 import type { CustomConfig, CustomOption } from '@/lib/custom-cake';
@@ -25,6 +26,27 @@ export default function CustomOrderClient({ config, options }: Props) {
   const [form, setForm] = useState({
     name: '', email: '', phone: '', eventType: '', eventDate: '', specialRequirements: '',
   });
+  const [refImages, setRefImages] = useState<string[]>([]);
+  const [uploadingRef, setUploadingRef] = useState(false);
+  const refInput = useRef<HTMLInputElement>(null);
+
+  const uploadRefs = async (files: FileList) => {
+    setUploadingRef(true);
+    for (const file of Array.from(files).slice(0, 5)) {
+      const fd = new FormData();
+      fd.append('file', file);
+      try {
+        const res = await fetch('/api/upload/reference', { method: 'POST', body: fd });
+        const data = await res.json();
+        if (res.ok) setRefImages(p => [...p, data.url]);
+        else toast.error(data.error ?? 'Upload failed');
+      } catch {
+        toast.error('Upload failed. Please try again.');
+      }
+    }
+    setUploadingRef(false);
+    if (refInput.current) refInput.current.value = '';
+  };
 
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
@@ -68,6 +90,7 @@ export default function CustomOrderClient({ config, options }: Props) {
           ...form,
           selectedOptions: chosen.map(o => ({ group_name: o.group_name, name: o.name, price_delta: o.price_delta })),
           estimatedPrice: total,
+          referenceImages: refImages,
         }),
       });
       if (!res.ok) throw new Error();
@@ -157,9 +180,12 @@ export default function CustomOrderClient({ config, options }: Props) {
     <div className="min-h-screen bg-amber-50 pt-20 pb-16">
       <div className="hero-gradient py-20 px-4 sm:px-6 text-center">
         <h1 className="font-display text-5xl font-bold text-white mb-3 mt-8">Build Your Cake</h1>
-        <p className="text-white/80 text-lg max-w-md mx-auto">
+        <p className="text-white/80 text-lg max-w-md mx-auto mb-5">
           Choose your flavours and finishes, see your price instantly, and order for your special day.
         </p>
+        <Link href="/gallery" className="inline-flex items-center gap-1.5 text-amber-300 hover:text-amber-200 font-semibold text-sm transition-colors">
+          See cakes we&apos;ve made →
+        </Link>
       </div>
 
       <div className="max-w-5xl mx-auto px-4 sm:px-6 py-12">
@@ -231,6 +257,45 @@ export default function CustomOrderClient({ config, options }: Props) {
                   <textarea name="specialRequirements" value={form.specialRequirements} onChange={handleChange} rows={3}
                     placeholder="Message on cake, colour theme, number of guests, dietary notes…" className={`${inputCls} resize-none`} />
                 </Field>
+
+                {/* Inspiration images */}
+                <Field label="Inspiration Photos (optional)">
+                  <div className="flex flex-wrap gap-3">
+                    {refImages.map((url, i) => (
+                      <div key={i} className="relative w-20 h-20 rounded-xl overflow-hidden border border-stone-200">
+                        <Image src={url} alt={`Reference ${i + 1}`} fill className="object-cover" sizes="80px" />
+                        <button
+                          type="button"
+                          onClick={() => setRefImages(p => p.filter((_, idx) => idx !== i))}
+                          className="absolute top-0.5 right-0.5 w-5 h-5 bg-black/60 rounded-full flex items-center justify-center text-white"
+                        >
+                          <X size={12} />
+                        </button>
+                      </div>
+                    ))}
+                    {refImages.length < 5 && (
+                      <button
+                        type="button"
+                        onClick={() => refInput.current?.click()}
+                        disabled={uploadingRef}
+                        className="w-20 h-20 rounded-xl border-2 border-dashed border-stone-300 flex flex-col items-center justify-center text-stone-400 hover:border-amber-400 hover:text-amber-600 transition-colors disabled:opacity-50"
+                      >
+                        <ImagePlus size={18} />
+                        <span className="text-[10px] mt-1">{uploadingRef ? 'Uploading…' : 'Add'}</span>
+                      </button>
+                    )}
+                  </div>
+                  <input
+                    ref={refInput}
+                    type="file"
+                    accept="image/*"
+                    multiple
+                    onChange={e => { if (e.target.files?.length) uploadRefs(e.target.files); }}
+                    className="hidden"
+                  />
+                  <p className="text-xs text-stone-400 mt-2">Share any design ideas or Pinterest screenshots — helps us match your vision. Up to 5 images.</p>
+                </Field>
+
                 <p className="text-xs text-stone-400">Earliest event date is {config.lead_time_days} days from today so we can prepare properly.</p>
               </div>
             </div>
