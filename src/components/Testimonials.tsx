@@ -13,12 +13,6 @@ type Review = {
   product?: string;
 };
 
-const FALLBACK: Review[] = [
-  { id: '1', name: 'Adaeze O.', location: 'Lagos', rating: 5, review: 'The Cream Cheese Banana Cake was absolutely divine! I ordered for my birthday and everyone kept asking where it was from. Already planning my next order.', product: 'Cream Cheese Banana Cake' },
-  { id: '2', name: 'Emeka T.', location: 'Abuja', rating: 5, review: "The Almond Croissants are the best I've had in Nigeria — honestly better than some places I've been abroad. The delivery was fast and packaging was perfect.", product: 'Almond Croissant' },
-  { id: '3', name: 'Funmi A.', location: 'Lagos', rating: 5, review: 'Ordered the Family Bundle for a gathering. Everything was fresh, warm, and absolutely delicious. The croissants were flaky and the cake was moist. 10/10!', product: 'Family Bundle' },
-];
-
 const COLORS = ['bg-amber-800', 'bg-stone-700', 'bg-amber-900', 'bg-amber-700', 'bg-stone-800'];
 
 export default function Testimonials() {
@@ -30,11 +24,11 @@ export default function Testimonials() {
   useEffect(() => {
     fetch('/api/reviews')
       .then(r => r.json())
-      .then(d => setReviews(d.reviews?.length ? d.reviews : FALLBACK))
-      .catch(() => setReviews(FALLBACK));
+      .then(d => setReviews(Array.isArray(d.reviews) ? d.reviews : []))
+      .catch(() => setReviews([]));
   }, []);
 
-  const displayed = reviews.length ? reviews : FALLBACK;
+  const displayed = reviews;
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -74,28 +68,36 @@ export default function Testimonials() {
           </h2>
         </div>
 
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
-          {displayed.slice(0, 3).map((r, i) => (
-            <div key={r.id} className="bg-white rounded-3xl p-6 shadow-sm border border-amber-100 card-hover">
-              <div className="flex items-center gap-1 mb-4">
-                {Array.from({ length: r.rating }).map((_, j) => (
-                  <Star key={j} size={16} className="text-amber-400 fill-amber-400" />
-                ))}
-              </div>
-              {r.product && <p className="text-amber-600 text-xs font-semibold uppercase tracking-widest mb-2">{r.product}</p>}
-              <p className="text-stone-600 text-sm leading-relaxed mb-5 italic">&ldquo;{r.review}&rdquo;</p>
-              <div className="flex items-center gap-3">
-                <div className={`w-10 h-10 ${COLORS[i % COLORS.length]} rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}>
-                  {r.name.charAt(0)}
+        {displayed.length > 0 ? (
+          <div className="grid grid-cols-1 md:grid-cols-3 gap-6 mb-10">
+            {displayed.slice(0, 3).map((r, i) => (
+              <div key={r.id} className="bg-white rounded-3xl p-6 shadow-sm border border-amber-100 card-hover">
+                <div className="flex items-center gap-1 mb-4">
+                  {Array.from({ length: r.rating }).map((_, j) => (
+                    <Star key={j} size={16} className="text-amber-400 fill-amber-400" />
+                  ))}
                 </div>
-                <div>
-                  <p className="font-bold text-stone-900 text-sm">{r.name}</p>
-                  <p className="text-stone-400 text-xs">{r.location}</p>
+                {r.product && <p className="text-amber-600 text-xs font-semibold uppercase tracking-widest mb-2">{r.product}</p>}
+                <p className="text-stone-600 text-sm leading-relaxed mb-5 italic">&ldquo;{r.review}&rdquo;</p>
+                <div className="flex items-center gap-3">
+                  <div className={`w-10 h-10 ${COLORS[i % COLORS.length]} rounded-full flex items-center justify-center text-white font-bold text-sm flex-shrink-0`}>
+                    {r.name.charAt(0)}
+                  </div>
+                  <div>
+                    <p className="font-bold text-stone-900 text-sm">{r.name}</p>
+                    <p className="text-stone-400 text-xs">{r.location}</p>
+                  </div>
                 </div>
               </div>
-            </div>
-          ))}
-        </div>
+            ))}
+          </div>
+        ) : (
+          <div className="text-center mb-10">
+            <p className="text-stone-500 text-lg max-w-md mx-auto">
+              Been a PopMerry customer? We&apos;d love to hear about it — leave the first review and help others discover us.
+            </p>
+          </div>
+        )}
 
         {/* Leave a review */}
         {!showForm ? (

@@ -297,13 +297,13 @@ export default async function HomePage() {
             Planning a Celebration?
           </h2>
           <p className="text-stone-400 text-lg leading-relaxed mb-8">
-            Birthdays, weddings, baby showers, corporate events — we create custom cakes, croissant trays, and popcorn packs tailored exactly to your vision and quantity.
+            Birthdays, weddings, baby showers, corporate events — build your dream cake online, pick your flavours and finishes, and see your price instantly.
           </p>
           <Link
             href="/custom-order"
             className="inline-flex items-center gap-2 bg-amber-500 hover:bg-amber-400 text-white font-bold px-8 py-4 rounded-full transition-all hover:shadow-xl hover:shadow-amber-900/50 hover:-translate-y-1 text-base"
           >
-            Request a Custom Order
+            Build Your Custom Cake
             <ArrowRight size={18} />
           </Link>
         </div>

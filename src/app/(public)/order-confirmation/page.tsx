@@ -4,7 +4,7 @@ import { CheckCircle, ArrowRight, MessageCircle, ShoppingBag } from 'lucide-reac
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { formatPrice } from '@/lib/products-data';
 
-async function OrderDetails({ orderId }: { orderId: string }) {
+async function OrderDetails({ orderId, isTransfer }: { orderId: string; isTransfer?: boolean }) {
   const db = getSupabaseAdmin();
   const { data: order } = await db
     .from('orders')
@@ -49,10 +49,22 @@ async function OrderDetails({ orderId }: { orderId: string }) {
           <span>{formatPrice(order.delivery_fee)}</span>
         </div>
         <div className="flex justify-between font-bold text-stone-900 pt-1 border-t border-stone-200 mt-1">
-          <span>Total Paid</span>
+          <span>{isTransfer ? 'Amount Due' : 'Total Paid'}</span>
           <span className="text-amber-700">{formatPrice(order.total)}</span>
         </div>
       </div>
+
+      {/* Bank transfer instructions */}
+      {isTransfer && (
+        <div className="px-6 py-4 bg-amber-50 border-t border-amber-100">
+          <p className="text-xs font-bold text-stone-700 uppercase tracking-widest mb-2">Pay by transfer to confirm</p>
+          <div className="space-y-1 text-sm">
+            <div className="flex justify-between"><span className="text-stone-500">Bank</span><span className="font-semibold text-stone-800">{process.env.NEXT_PUBLIC_BANK_NAME ?? 'See WhatsApp'}</span></div>
+            <div className="flex justify-between"><span className="text-stone-500">Account Name</span><span className="font-semibold text-stone-800">{process.env.NEXT_PUBLIC_BANK_ACCOUNT_NAME ?? 'PopMerry Foods'}</span></div>
+            <div className="flex justify-between"><span className="text-stone-500">Account No.</span><span className="font-bold text-stone-900 font-mono">{process.env.NEXT_PUBLIC_BANK_ACCOUNT_NUMBER ?? '—'}</span></div>
+          </div>
+        </div>
+      )}
 
       <div className="px-6 py-3 border-t border-amber-50">
         <p className="text-xs text-stone-400">
@@ -68,22 +80,33 @@ async function OrderDetails({ orderId }: { orderId: string }) {
   );
 }
 
-async function ConfirmationContent({ orderId }: { orderId?: string }) {
+async function ConfirmationContent({ orderId, isTransfer }: { orderId?: string; isTransfer?: boolean }) {
   return (
     <div className="min-h-screen bg-amber-50 flex items-center justify-center px-4 pt-20 pb-10">
       <div className="max-w-lg w-full text-center">
         <div className="flex justify-center mb-6">
-          <div className="w-24 h-24 bg-green-100 rounded-full flex items-center justify-center">
-            <CheckCircle size={48} className="text-green-500" />
+          <div className={`w-24 h-24 rounded-full flex items-center justify-center ${isTransfer ? 'bg-amber-100' : 'bg-green-100'}`}>
+            <CheckCircle size={48} className={isTransfer ? 'text-amber-500' : 'text-green-500'} />
           </div>
         </div>
 
-        <h1 className="font-display text-4xl font-bold text-stone-900 mb-3">Order Confirmed!</h1>
-        <p className="text-stone-500 text-lg mb-8 leading-relaxed">
-          Payment received. Our bakers are already on it — we&apos;ll reach out on WhatsApp shortly.
-        </p>
+        {isTransfer ? (
+          <>
+            <h1 className="font-display text-4xl font-bold text-stone-900 mb-3">Order Received!</h1>
+            <p className="text-stone-500 text-lg mb-8 leading-relaxed">
+              Complete your bank transfer using the details below, then send your receipt on WhatsApp so we can confirm and start baking.
+            </p>
+          </>
+        ) : (
+          <>
+            <h1 className="font-display text-4xl font-bold text-stone-900 mb-3">Order Confirmed!</h1>
+            <p className="text-stone-500 text-lg mb-8 leading-relaxed">
+              Payment received. Our bakers are already on it — we&apos;ll reach out on WhatsApp shortly.
+            </p>
+          </>
+        )}
 
-        {orderId && <OrderDetails orderId={orderId} />}
+        {orderId && <OrderDetails orderId={orderId} isTransfer={isTransfer} />}
 
         {/* What happens next */}
         <div className="bg-white rounded-3xl p-6 border border-amber-100 text-left mb-6 space-y-4">
@@ -145,14 +168,15 @@ async function ConfirmationContent({ orderId }: { orderId?: string }) {
 }
 
 interface Props {
-  searchParams: Promise<{ orderId?: string }>;
+  searchParams: Promise<{ orderId?: string; method?: string }>;
 }
 
 export default async function OrderConfirmationPage({ searchParams }: Props) {
-  const { orderId } = await searchParams;
+  const { orderId, method } = await searchParams;
+  const isTransfer = method === 'transfer';
   return (
     <Suspense fallback={<div className="min-h-screen flex items-center justify-center text-stone-500">Loading your order…</div>}>
-      <ConfirmationContent orderId={orderId} />
+      <ConfirmationContent orderId={orderId} isTransfer={isTransfer} />
     </Suspense>
   );
 }

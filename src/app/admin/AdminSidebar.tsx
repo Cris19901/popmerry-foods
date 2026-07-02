@@ -1,8 +1,9 @@
 'use client';
 
+import { useState } from 'react';
 import Link from 'next/link';
 import { usePathname, useRouter } from 'next/navigation';
-import { LayoutDashboard, ShoppingBag, ClipboardList, Package, Cake, Image as ImageIcon, Users, Tag, Star, Gift, LogOut } from 'lucide-react';
+import { LayoutDashboard, ShoppingBag, ClipboardList, Package, Cake, Image as ImageIcon, Users, Tag, Star, Gift, LogOut, MoreHorizontal, X } from 'lucide-react';
 
 const NAV = [
   { href: '/admin', label: 'Dashboard', icon: LayoutDashboard, exact: true },
@@ -17,12 +18,14 @@ const NAV = [
   { href: '/admin/reviews', label: 'Reviews', icon: Star, exact: false },
 ];
 
-// Bottom nav limited to 4 primary items to avoid crowding on mobile
+// Mobile bottom bar shows 4 primary items; the rest live in a "More" sheet
 const BOTTOM_NAV = NAV.slice(0, 4);
+const MORE_NAV = NAV.slice(4);
 
 export default function AdminSidebar() {
   const pathname = usePathname();
   const router = useRouter();
+  const [moreOpen, setMoreOpen] = useState(false);
 
   const handleLogout = async () => {
     await fetch('/api/admin/auth', { method: 'DELETE' });
@@ -101,6 +104,48 @@ export default function AdminSidebar() {
         </button>
       </div>
 
+      {/* ── Mobile "More" sheet ───────────────────────── */}
+      {moreOpen && (
+        <div className="lg:hidden fixed inset-0 z-50" onClick={() => setMoreOpen(false)}>
+          <div className="absolute inset-0 bg-black/50" />
+          <div className="absolute bottom-0 left-0 right-0 bg-[#1A0800] rounded-t-3xl p-5 pb-6" onClick={e => e.stopPropagation()}>
+            <div className="flex items-center justify-between mb-4">
+              <p className="font-display text-white font-bold">All Sections</p>
+              <button onClick={() => setMoreOpen(false)} className="text-stone-400 hover:text-white p-1" aria-label="Close">
+                <X size={20} />
+              </button>
+            </div>
+            <div className="grid grid-cols-3 gap-3">
+              {MORE_NAV.map(({ href, label, icon: Icon, exact }) => {
+                const active = isActive(href, exact);
+                return (
+                  <Link
+                    key={href}
+                    href={href}
+                    onClick={() => setMoreOpen(false)}
+                    className={`flex flex-col items-center justify-center gap-2 py-4 rounded-2xl text-[11px] font-semibold text-center transition-colors ${
+                      active ? 'bg-amber-700 text-white' : 'bg-white/5 text-stone-300 hover:bg-white/10'
+                    }`}
+                  >
+                    <Icon size={22} />
+                    {label}
+                  </Link>
+                );
+              })}
+              <Link
+                href="/"
+                target="_blank"
+                onClick={() => setMoreOpen(false)}
+                className="flex flex-col items-center justify-center gap-2 py-4 rounded-2xl text-[11px] font-semibold text-center bg-white/5 text-stone-300 hover:bg-white/10 transition-colors"
+              >
+                <span className="text-[22px] leading-none">↗</span>
+                Live site
+              </Link>
+            </div>
+          </div>
+        </div>
+      )}
+
       {/* ── Mobile bottom nav bar ─────────────────────── */}
       <nav className="lg:hidden fixed bottom-0 left-0 right-0 z-40 bg-[#1A0800] border-t border-white/10 flex items-stretch">
         {BOTTOM_NAV.map(({ href, label, icon: Icon, exact }) => {
@@ -118,6 +163,15 @@ export default function AdminSidebar() {
             </Link>
           );
         })}
+        <button
+          onClick={() => setMoreOpen(true)}
+          className={`flex-1 flex flex-col items-center justify-center gap-1 py-3 text-[10px] font-semibold transition-colors ${
+            MORE_NAV.some(n => isActive(n.href, n.exact)) ? 'text-amber-400' : 'text-stone-500 hover:text-stone-300'
+          }`}
+        >
+          <MoreHorizontal size={20} />
+          More
+        </button>
       </nav>
     </>
   );
