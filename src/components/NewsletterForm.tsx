@@ -1,13 +1,12 @@
 'use client';
 
+import { waLink } from '@/lib/constants';
+
 export default function NewsletterForm() {
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     const email = (e.currentTarget.elements.namedItem('email') as HTMLInputElement).value;
-    window.open(
-      `https://wa.me/2347039571698?text=${encodeURIComponent(`Hi! I'd like to join the PopMerry Foods mailing list: ${email}`)}`,
-      '_blank'
-    );
+    window.open(waLink(`Hi! I'd like to join the PopMerry Foods mailing list: ${email}`), '_blank');
   };
 
   return (

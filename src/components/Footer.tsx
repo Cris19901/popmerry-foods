@@ -1,4 +1,5 @@
 import Link from 'next/link';
+import { WHATSAPP_NUMBER, CONTACT_PHONE_LOCAL, waLink } from '@/lib/constants';
 
 export default function Footer() {
   return (
@@ -16,7 +17,7 @@ export default function Footer() {
             </p>
             <div className="flex items-center gap-3 mt-5">
               <a
-                href="https://wa.me/2347039571698"
+                href={waLink()}
                 target="_blank"
                 rel="noopener noreferrer"
                 className="bg-green-600 hover:bg-green-500 text-white text-xs font-semibold px-4 py-2 rounded-full transition-colors"
@@ -69,8 +70,8 @@ export default function Footer() {
             <ul className="space-y-3 text-sm text-stone-400">
               <li>
                 <span className="block text-stone-500 text-xs mb-0.5">Phone / WhatsApp</span>
-                <a href="tel:+2347039571698" className="hover:text-amber-400 transition-colors">
-                  07039571698
+                <a href={`tel:+${WHATSAPP_NUMBER}`} className="hover:text-amber-400 transition-colors">
+                  {CONTACT_PHONE_LOCAL}
                 </a>
               </li>
               <li>

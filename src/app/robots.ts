@@ -1,4 +1,5 @@
 import { MetadataRoute } from 'next';
+import { SITE_URL } from '@/lib/constants';
 
 export default function robots(): MetadataRoute.Robots {
   return {
@@ -6,9 +7,10 @@ export default function robots(): MetadataRoute.Robots {
       {
         userAgent: '*',
         allow: '/',
-        disallow: ['/admin', '/api/'],
+        // /quote/* are private, per-customer capability URLs
+        disallow: ['/admin', '/api/', '/quote/'],
       },
     ],
-    sitemap: 'https://popmerryfoods.com.ng/sitemap.xml',
+    sitemap: `${SITE_URL}/sitemap.xml`,
   };
 }

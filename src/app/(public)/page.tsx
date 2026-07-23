@@ -5,6 +5,7 @@ import ProductCard from '@/components/ProductCard';
 import Testimonials from '@/components/Testimonials';
 import NewsletterForm from '@/components/NewsletterForm';
 import { getProducts } from '@/lib/products-db';
+import { WHATSAPP_NUMBER } from '@/lib/constants';
 
 const FEATURED_IDS = ['bc-classic', 'cr-butter', 'pc-classic', 'bn-morning'];
 
@@ -14,7 +15,7 @@ const localBusinessSchema = {
   name: 'PopMerry Foods',
   description: 'Handcrafted banana cakes, artisan croissants, and freshly popped popcorn made daily in Lagos.',
   url: 'https://popmerryfoods.com.ng',
-  telephone: '+2347039571698',
+  telephone: `+${WHATSAPP_NUMBER}`,
   email: 'hello@popmerryfoods.com.ng',
   address: {
     '@type': 'PostalAddress',

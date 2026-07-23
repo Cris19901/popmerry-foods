@@ -6,6 +6,7 @@ import Image from 'next/image';
 import { ArrowLeft, CheckCircle, Copy, Banknote, MessageCircle, ImagePlus, X } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { formatPrice } from '@/lib/products-data';
+import { waLink } from '@/lib/constants';
 import type { CustomConfig, CustomOption } from '@/lib/custom-cake';
 
 const EVENT_TYPES = [
@@ -158,7 +159,7 @@ export default function CustomOrderClient({ config, options }: Props) {
           </div>
 
           <a
-            href={`https://wa.me/2347039571698?text=${encodeURIComponent(summary)}`}
+            href={waLink(summary)}
             target="_blank" rel="noopener noreferrer"
             className="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 text-white font-bold py-3.5 rounded-2xl transition-colors text-sm mb-3"
           >

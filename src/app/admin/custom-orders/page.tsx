@@ -2,6 +2,7 @@ import Image from 'next/image';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { formatPrice } from '@/lib/products-data';
 import CustomOrderStatusSelect from './CustomOrderStatusSelect';
+import QuoteForm from './QuoteForm';
 
 type SelectedOption = { group_name: string; name: string; price_delta: number };
 
@@ -92,6 +93,19 @@ export default async function AdminCustomOrdersPage() {
                   ))}
                 </div>
               )}
+
+              {/* Quote + deposit */}
+              <QuoteForm
+                orderId={order.id}
+                customerName={order.name}
+                customerPhone={order.phone}
+                estimatedPrice={order.estimated_price ?? null}
+                quotedPrice={order.quoted_price ?? null}
+                depositAmount={order.deposit_amount ?? null}
+                quoteNote={order.quote_note ?? null}
+                quoteToken={order.quote_token ?? null}
+                depositPaid={!!order.deposit_paid}
+              />
 
               {order.special_requirements && (
                 <div className="bg-amber-50 rounded-xl p-3 mb-4">

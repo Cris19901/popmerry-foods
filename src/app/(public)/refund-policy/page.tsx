@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import type { Metadata } from 'next';
+import { waLink, CONTACT_PHONE_INTL } from '@/lib/constants';
 
 export const metadata: Metadata = {
   title: 'Refund Policy',
@@ -55,7 +56,7 @@ export default function RefundPolicyPage() {
 
           <section>
             <h2 className="font-display text-xl font-bold text-stone-900 mb-3">Contact Us</h2>
-            <p><strong>WhatsApp:</strong> <a href="https://wa.me/2347039571698" className="text-amber-700 hover:underline">+234 703 957 1698</a></p>
+            <p><strong>WhatsApp:</strong> <a href={waLink()} className="text-amber-700 hover:underline">{CONTACT_PHONE_INTL}</a></p>
             <p><strong>Email:</strong> hello@popmerryfoods.com.ng</p>
           </section>
         </div>

@@ -3,7 +3,12 @@ import { z } from 'zod';
 import { getSupabaseAdmin } from '@/lib/supabase';
 
 const patchSchema = z.object({
-  status: z.enum(['new', 'contacted', 'quoted', 'confirmed', 'cancelled']),
+  // Status-only update (existing behaviour)
+  status: z.enum(['new', 'contacted', 'quoted', 'deposit_paid', 'confirmed', 'completed', 'cancelled']).optional(),
+  // Quote payload — presence of quoted_price means "issue/update a quote"
+  quoted_price: z.number().int().positive().max(100_000_000).optional(),
+  deposit_amount: z.number().int().min(0).max(100_000_000).optional(),
+  quote_note: z.string().max(1000).optional(),
 });
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -11,12 +16,51 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const parsed = patchSchema.safeParse(await req.json());
 
   if (!parsed.success) {
-    return NextResponse.json({ error: 'Invalid status' }, { status: 400 });
+    return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 
+  const { status, quoted_price, deposit_amount, quote_note } = parsed.data;
   const db = getSupabaseAdmin();
-  const { error } = await db.from('custom_order_requests').update({ status: parsed.data.status }).eq('id', id);
 
-  if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-  return NextResponse.json({ ok: true });
+  // ── Issue / update a quote ──────────────────────────────────────────
+  if (quoted_price !== undefined) {
+    const deposit = deposit_amount ?? 0;
+    if (deposit > quoted_price) {
+      return NextResponse.json({ error: 'Deposit cannot exceed the quoted price' }, { status: 400 });
+    }
+
+    // Reuse the existing token so a previously shared link keeps working
+    const { data: existing } = await db
+      .from('custom_order_requests')
+      .select('quote_token, deposit_paid')
+      .eq('id', id)
+      .single();
+
+    const token = existing?.quote_token ?? crypto.randomUUID().replace(/-/g, '');
+
+    const { error } = await db
+      .from('custom_order_requests')
+      .update({
+        quoted_price,
+        deposit_amount: deposit,
+        quote_note: quote_note ?? null,
+        quote_token: token,
+        quoted_at: new Date().toISOString(),
+        // Don't downgrade a request whose deposit is already settled
+        status: existing?.deposit_paid ? 'deposit_paid' : 'quoted',
+      })
+      .eq('id', id);
+
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ ok: true, quoteToken: token });
+  }
+
+  // ── Status-only update ──────────────────────────────────────────────
+  if (status) {
+    const { error } = await db.from('custom_order_requests').update({ status }).eq('id', id);
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ ok: true });
+  }
+
+  return NextResponse.json({ error: 'Nothing to update' }, { status: 400 });
 }

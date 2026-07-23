@@ -4,14 +4,20 @@ import { useState } from 'react';
 import { useRouter } from 'next/navigation';
 import toast from 'react-hot-toast';
 
-const STATUSES = ['new', 'contacted', 'quoted', 'confirmed', 'cancelled'];
+const STATUSES = ['new', 'contacted', 'quoted', 'deposit_paid', 'confirmed', 'completed', 'cancelled'];
+
+const STATUS_LABELS: Record<string, string> = {
+  deposit_paid: 'deposit paid',
+};
 
 const STATUS_STYLES: Record<string, string> = {
-  new:        'bg-blue-50 text-blue-700',
-  contacted:  'bg-amber-50 text-amber-700',
-  quoted:     'bg-purple-50 text-purple-700',
-  confirmed:  'bg-green-50 text-green-700',
-  cancelled:  'bg-red-50 text-red-600',
+  new:          'bg-blue-50 text-blue-700',
+  contacted:    'bg-amber-50 text-amber-700',
+  quoted:       'bg-purple-50 text-purple-700',
+  deposit_paid: 'bg-teal-50 text-teal-700',
+  confirmed:    'bg-green-50 text-green-700',
+  completed:    'bg-stone-200 text-stone-700',
+  cancelled:    'bg-red-50 text-red-600',
 };
 
 export default function CustomOrderStatusSelect({ orderId, currentStatus }: { orderId: string; currentStatus: string }) {
@@ -44,7 +50,7 @@ export default function CustomOrderStatusSelect({ orderId, currentStatus }: { or
       className={`text-xs font-semibold px-2.5 py-1.5 rounded-full border-0 cursor-pointer focus:outline-none focus:ring-2 focus:ring-amber-400 capitalize ${STATUS_STYLES[status] ?? 'bg-stone-100 text-stone-600'}`}
     >
       {STATUSES.map(s => (
-        <option key={s} value={s} className="bg-white text-stone-800 capitalize">{s}</option>
+        <option key={s} value={s} className="bg-white text-stone-800 capitalize">{STATUS_LABELS[s] ?? s}</option>
       ))}
     </select>
   );

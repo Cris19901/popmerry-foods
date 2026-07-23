@@ -1,6 +1,7 @@
 import Link from 'next/link';
 import { ArrowLeft } from 'lucide-react';
 import type { Metadata } from 'next';
+import { waLink, CONTACT_PHONE_INTL } from '@/lib/constants';
 
 export const metadata: Metadata = {
   title: 'Terms & Conditions',
@@ -52,7 +53,7 @@ export default function TermsPage() {
           <section>
             <h2 className="font-display text-xl font-bold text-stone-900 mb-3">7. Contact</h2>
             <p><strong>Email:</strong> hello@popmerryfoods.com.ng</p>
-            <p><strong>WhatsApp:</strong> <a href="https://wa.me/2347039571698" className="text-amber-700 hover:underline">+234 703 957 1698</a></p>
+            <p><strong>WhatsApp:</strong> <a href={waLink()} className="text-amber-700 hover:underline">{CONTACT_PHONE_INTL}</a></p>
           </section>
         </div>
       </div>

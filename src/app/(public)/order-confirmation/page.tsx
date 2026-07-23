@@ -3,6 +3,7 @@ import Link from 'next/link';
 import { CheckCircle, ArrowRight, MessageCircle, ShoppingBag } from 'lucide-react';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { formatPrice } from '@/lib/products-data';
+import { waLink, CONTACT_PHONE_INTL } from '@/lib/constants';
 
 async function OrderDetails({ orderId, isTransfer }: { orderId: string; isTransfer?: boolean }) {
   const db = getSupabaseAdmin();
@@ -130,8 +131,8 @@ async function ConfirmationContent({ orderId, isTransfer }: { orderId?: string; 
           <MessageCircle size={20} className="text-green-600 flex-shrink-0" />
           <p className="text-sm text-green-800">
             Questions? WhatsApp us at{' '}
-            <a href="https://wa.me/2347039571698" className="font-bold underline">
-              +234 703 957 1698
+            <a href={waLink()} className="font-bold underline">
+              {CONTACT_PHONE_INTL}
             </a>
           </p>
         </div>

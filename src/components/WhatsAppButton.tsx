@@ -1,11 +1,11 @@
 'use client';
 
-export default function WhatsAppButton() {
-  const message = encodeURIComponent("Hi PopMerry! I'd like to enquire about an order 🍰");
+import { waLink } from '@/lib/constants';
 
+export default function WhatsAppButton() {
   return (
     <a
-      href={`https://wa.me/2347039571698?text=${message}`}
+      href={waLink("Hi PopMerry! I'd like to enquire about an order 🍰")}
       target="_blank"
       rel="noopener noreferrer"
       aria-label="Chat with us on WhatsApp"

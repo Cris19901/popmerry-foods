@@ -9,7 +9,7 @@ import toast from 'react-hot-toast';
 import Script from 'next/script';
 import { useCartStore } from '@/lib/cart-store';
 import { formatPrice } from '@/lib/products-data';
-import { calcDeliveryFee, FREE_DELIVERY_THRESHOLD } from '@/lib/constants';
+import { calcDeliveryFee, FREE_DELIVERY_THRESHOLD, waLink } from '@/lib/constants';
 import { CustomerDetails } from '@/types';
 
 declare global {
@@ -162,7 +162,7 @@ export default function CheckoutPage() {
       const orderId = await createOrder();
       clearCart();
       const waMsg = `Hi! I just placed a PopMerry order #${orderId.slice(0, 8).toUpperCase()} for ${formatPrice(total)}. I'll be sending payment via bank transfer${transferRef ? `. Transfer reference: ${transferRef}` : ''}.`;
-      window.open(`https://wa.me/2347039571698?text=${encodeURIComponent(waMsg)}`, '_blank');
+      window.open(waLink(waMsg), '_blank');
       router.push(`/order-confirmation?orderId=${orderId}&method=transfer`);
     } catch {
       toast.error('Something went wrong. Please try again.');
@@ -248,7 +248,7 @@ export default function CheckoutPage() {
                     />
                     <p className="text-xs text-stone-400 mt-1.5">
                       We deliver to <span className="text-stone-600 font-medium">Lagos Island, Lagos Mainland, Ibadan, Ilorin, Osun, Ogun, Oyo Town</span> and <span className="text-stone-600 font-medium">Ogbomosho</span>.{' '}
-                      <a href="https://wa.me/2347039571698" target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline font-medium">
+                      <a href={waLink()} target="_blank" rel="noopener noreferrer" className="text-amber-600 hover:underline font-medium">
                         WhatsApp us
                       </a>{' '}if unsure about your area.
                     </p>

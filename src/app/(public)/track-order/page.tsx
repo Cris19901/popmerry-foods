@@ -4,6 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { Search, Package, Clock, CheckCircle, ChefHat, ArrowLeft, MessageCircle } from 'lucide-react';
 import { formatPrice } from '@/lib/products-data';
+import { waLink } from '@/lib/constants';
 
 type OrderStatus = 'pending' | 'paid' | 'preparing' | 'delivered';
 
@@ -157,7 +158,7 @@ export default function TrackOrderPage() {
 
             {/* WhatsApp contact */}
             <a
-              href={`https://wa.me/2347039571698?text=${encodeURIComponent(`Hi, I'm checking on my order #${order.id.slice(0, 8).toUpperCase()}`)}`}
+              href={waLink(`Hi, I'm checking on my order #${order.id.slice(0, 8).toUpperCase()}`)}
               target="_blank"
               rel="noopener noreferrer"
               className="flex items-center justify-center gap-2 w-full bg-green-600 hover:bg-green-700 text-white font-semibold py-3.5 rounded-2xl transition-colors text-sm"

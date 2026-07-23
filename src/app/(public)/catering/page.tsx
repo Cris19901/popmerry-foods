@@ -4,7 +4,7 @@ import { useState } from 'react';
 import Link from 'next/link';
 import { ArrowLeft, Building2, Send, CheckCircle } from 'lucide-react';
 import toast from 'react-hot-toast';
-import type { Metadata } from 'next';
+import { waLink } from '@/lib/constants';
 
 export default function CateringPage() {
   const [submitted, setSubmitted] = useState(false);
@@ -43,7 +43,7 @@ export default function CateringPage() {
         `Items Needed: ${form.items}`,
         `Requirements: ${form.requirements}`,
       ].join('\n');
-      window.open(`https://wa.me/2347039571698?text=${encodeURIComponent(msg)}`, '_blank');
+      window.open(waLink(msg), '_blank');
       setSubmitted(true);
     } catch {
       toast.error('Something went wrong. Try WhatsApp directly.');
