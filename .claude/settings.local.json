@@ -27,7 +27,10 @@
       "Bash(git commit -m 'Add Microsoft Clarity project ID \\(x1o7lwiijf\\) *)",
       "mcp__claude_ai_Vercel__get_deployment_build_logs",
       "Bash(git commit -m 'Harden Upstash init — validate URL prefix, wrap in try/catch *)",
-      "Bash(git rm *)"
+      "Bash(git rm *)",
+      "Bash(rm -rf .next)",
+      "Bash(echo \"EXIT=$?\")",
+      "Read(//tmp/**)"
     ]
   }
 }

@@ -1,4 +1,4 @@
-import { getCustomConfig, getCustomOptions, isCustomCakeReady } from '@/lib/custom-cake';
+import { getCustomConfig, getCustomOptions, getCustomOptionGroups, isCustomCakeReady } from '@/lib/custom-cake';
 import CustomCakeAdminClient from './CustomCakeAdminClient';
 
 export default async function AdminCustomCakePage() {
@@ -18,6 +18,10 @@ export default async function AdminCustomCakePage() {
     );
   }
 
-  const [config, options] = await Promise.all([getCustomConfig(), getCustomOptions(true)]);
-  return <CustomCakeAdminClient config={config} options={options} />;
+  const [config, options, groups] = await Promise.all([
+    getCustomConfig(),
+    getCustomOptions(true),
+    getCustomOptionGroups(),
+  ]);
+  return <CustomCakeAdminClient config={config} options={options} groups={groups} />;
 }

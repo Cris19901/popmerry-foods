@@ -3,24 +3,52 @@
 import { useState, useMemo, useRef } from 'react';
 import Link from 'next/link';
 import Image from 'next/image';
-import { ArrowLeft, CheckCircle, Copy, Banknote, MessageCircle, ImagePlus, X } from 'lucide-react';
+import { ArrowLeft, CheckCircle, Copy, Banknote, MessageCircle, ImagePlus, X, Check } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { formatPrice } from '@/lib/products-data';
 import { waLink } from '@/lib/constants';
-import type { CustomConfig, CustomOption } from '@/lib/custom-cake';
+import type { CustomConfig, CustomOption, CustomOptionGroup } from '@/lib/custom-cake';
 
 const EVENT_TYPES = [
   'Birthday', 'Wedding', 'Baby Shower', 'Corporate Event',
   'Anniversary', 'Graduation', 'Christmas / Holiday', 'Other',
 ];
 
+const DEFAULT_GROUP_META = { selection_type: 'multi' as const, required: false, sort_order: 100 };
+
 interface Props {
   config: CustomConfig;
   options: CustomOption[];
+  groups: CustomOptionGroup[];
 }
 
-export default function CustomOrderClient({ config, options }: Props) {
-  const [selected, setSelected] = useState<Set<string>>(new Set());
+export default function CustomOrderClient({ config, options, groups }: Props) {
+  // Group meta lookup, with a sensible default for groups without a config row
+  const metaFor = useMemo(() => {
+    const map = new Map(groups.map(g => [g.name, g]));
+    return (name: string) => map.get(name) ?? { name, ...DEFAULT_GROUP_META };
+  }, [groups]);
+
+  // Ordered list of groups that actually have options
+  const orderedGroups = useMemo(() => {
+    const names = Array.from(new Set(options.map(o => o.group_name)));
+    return names
+      .map(name => ({ name, opts: options.filter(o => o.group_name === name), meta: metaFor(name) }))
+      .sort((a, b) => a.meta.sort_order - b.meta.sort_order || a.name.localeCompare(b.name));
+  }, [options, metaFor]);
+
+  // Pre-select the first option of every required single-select group
+  const initialSelected = useMemo(() => {
+    const set = new Set<string>();
+    for (const g of orderedGroups) {
+      if (g.meta.selection_type === 'single' && g.meta.required && g.opts[0]) {
+        set.add(g.opts[0].id);
+      }
+    }
+    return set;
+  }, [orderedGroups]);
+
+  const [selected, setSelected] = useState<Set<string>>(initialSelected);
   const [submitted, setSubmitted] = useState(false);
   const [loading, setLoading] = useState(false);
   const [copied, setCopied] = useState(false);
@@ -52,19 +80,23 @@ export default function CustomOrderClient({ config, options }: Props) {
   const handleChange = (e: React.ChangeEvent<HTMLInputElement | HTMLSelectElement | HTMLTextAreaElement>) =>
     setForm(prev => ({ ...prev, [e.target.name]: e.target.value }));
 
-  const toggle = (id: string) =>
+  // Toggle for multi-select groups (add/remove independently)
+  const toggleMulti = (id: string) =>
     setSelected(prev => {
       const next = new Set(prev);
       next.has(id) ? next.delete(id) : next.add(id);
       return next;
     });
 
-  const groups = useMemo(() => {
-    return options.reduce<Record<string, CustomOption[]>>((acc, o) => {
-      (acc[o.group_name] ??= []).push(o);
-      return acc;
-    }, {});
-  }, [options]);
+  // Select for single-select groups (replaces any sibling in the same group)
+  const selectSingle = (group: { opts: CustomOption[]; meta: CustomOptionGroup }, id: string) =>
+    setSelected(prev => {
+      const next = new Set(prev);
+      group.opts.forEach(o => next.delete(o.id));
+      // Optional single groups allow toggling the choice off; required ones always keep one
+      if (!(group.meta.required && prev.has(id))) next.add(id);
+      return next;
+    });
 
   const chosen = useMemo(() => options.filter(o => selected.has(o.id)), [options, selected]);
   const total = useMemo(() => config.base_price + chosen.reduce((s, o) => s + o.price_delta, 0), [config.base_price, chosen]);
@@ -80,6 +112,14 @@ export default function CustomOrderClient({ config, options }: Props) {
     e.preventDefault();
     if (!form.name || !form.email || !form.phone || !form.eventType || !form.eventDate) {
       toast.error('Please fill in all required fields');
+      return;
+    }
+    // Every required single-select step must have a choice
+    const missing = orderedGroups.find(
+      g => g.meta.required && g.meta.selection_type === 'single' && !g.opts.some(o => selected.has(o.id))
+    );
+    if (missing) {
+      toast.error(`Please choose your ${missing.name.toLowerCase()}`);
       return;
     }
     setLoading(true);
@@ -197,39 +237,63 @@ export default function CustomOrderClient({ config, options }: Props) {
         <form onSubmit={handleSubmit} className="grid grid-cols-1 lg:grid-cols-5 gap-8">
           {/* Left: configurator + event details */}
           <div className="lg:col-span-3 space-y-6">
-            {/* Options */}
-            {Object.keys(groups).length > 0 && (
+            {/* Stepped builder */}
+            {orderedGroups.length > 0 && (
               <div className="bg-white rounded-3xl p-6 sm:p-8 border border-amber-100 shadow-sm">
-                <h2 className="font-display text-xl font-bold text-stone-900 mb-1">Customise Your Cake</h2>
-                <p className="text-stone-400 text-sm mb-5">Tap to add. Prices update live.</p>
-                <div className="space-y-6">
-                  {Object.entries(groups).map(([group, opts]) => (
-                    <div key={group}>
-                      <h3 className="text-xs font-bold text-stone-500 uppercase tracking-widest mb-3">{group}</h3>
-                      <div className="grid grid-cols-2 gap-2.5">
-                        {opts.map(o => {
-                          const active = selected.has(o.id);
-                          return (
-                            <button
-                              key={o.id}
-                              type="button"
-                              onClick={() => toggle(o.id)}
-                              className={`text-left px-4 py-3 rounded-2xl border-2 transition-all ${
-                                active
-                                  ? 'border-amber-500 bg-amber-50'
-                                  : 'border-stone-200 bg-white hover:border-amber-300'
-                              }`}
-                            >
-                              <span className="block text-sm font-semibold text-stone-800">{o.name}</span>
-                              <span className={`block text-xs mt-0.5 font-medium ${active ? 'text-amber-700' : 'text-stone-400'}`}>
-                                {o.price_delta > 0 ? `+${formatPrice(o.price_delta)}` : 'Included'}
-                              </span>
-                            </button>
-                          );
-                        })}
+                <h2 className="font-display text-xl font-bold text-stone-900 mb-1">Customize Your Banana Cake</h2>
+                <p className="text-stone-400 text-sm mb-6">Made exactly how you like it. Prices update live.</p>
+                <div className="space-y-8">
+                  {orderedGroups.map((g, stepIdx) => {
+                    const isSingle = g.meta.selection_type === 'single';
+                    return (
+                      <div key={g.name}>
+                        <div className="flex items-center gap-2.5 mb-1">
+                          <span className="w-6 h-6 bg-amber-700 text-white rounded-full flex items-center justify-center text-[11px] font-bold flex-shrink-0">
+                            {stepIdx + 1}
+                          </span>
+                          <h3 className="text-sm font-bold text-stone-800 uppercase tracking-widest">
+                            {isSingle ? `Choose your ${g.name.toLowerCase()}` : `Add your ${g.name.toLowerCase()}`}
+                          </h3>
+                        </div>
+                        <p className="text-xs text-stone-400 mb-3 ml-[34px]">
+                          {isSingle ? 'Pick one' : 'Add as many as you like'}
+                        </p>
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-2.5">
+                          {g.opts.map(o => {
+                            const active = selected.has(o.id);
+                            return (
+                              <button
+                                key={o.id}
+                                type="button"
+                                onClick={() => (isSingle ? selectSingle(g, o.id) : toggleMulti(o.id))}
+                                className={`relative text-left px-4 py-3.5 rounded-2xl border-2 transition-all ${
+                                  active
+                                    ? 'border-amber-500 bg-amber-50'
+                                    : 'border-stone-200 bg-white hover:border-amber-300'
+                                }`}
+                              >
+                                {/* radio / check indicator */}
+                                <span
+                                  className={`absolute top-3.5 right-3.5 w-5 h-5 flex items-center justify-center border-2 transition-colors ${
+                                    isSingle ? 'rounded-full' : 'rounded-md'
+                                  } ${active ? 'bg-amber-600 border-amber-600' : 'border-stone-300 bg-white'}`}
+                                >
+                                  {active && <Check size={12} className="text-white" strokeWidth={3} />}
+                                </span>
+                                <span className="block text-sm font-semibold text-stone-800 pr-8">{o.name}</span>
+                                {o.description && (
+                                  <span className="block text-xs text-stone-500 mt-0.5 pr-8 leading-snug">{o.description}</span>
+                                )}
+                                <span className={`block text-xs mt-1 font-semibold ${active ? 'text-amber-700' : 'text-stone-400'}`}>
+                                  {o.price_delta > 0 ? `+${formatPrice(o.price_delta)}` : 'Included'}
+                                </span>
+                              </button>
+                            );
+                          })}
+                        </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
             )}

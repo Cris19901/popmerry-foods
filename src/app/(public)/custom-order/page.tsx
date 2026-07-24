@@ -1,12 +1,16 @@
-import { getCustomConfig, getCustomOptions } from '@/lib/custom-cake';
+import { getCustomConfig, getCustomOptions, getCustomOptionGroups } from '@/lib/custom-cake';
 import CustomOrderClient from './CustomOrderClient';
 
 export const metadata = {
-  title: 'Build Your Custom Cake — PopMerry Foods',
-  description: 'Design your dream cake — choose your flavour, toppings and size, see the price instantly, and order for your event.',
+  title: 'Customize Your Banana Cake — PopMerry Foods',
+  description: 'Build your perfect banana cake — choose your base, add your flavours, set your sweetness, see the price instantly, and order for your event.',
 };
 
 export default async function CustomOrderPage() {
-  const [config, options] = await Promise.all([getCustomConfig(), getCustomOptions()]);
-  return <CustomOrderClient config={config} options={options} />;
+  const [config, options, groups] = await Promise.all([
+    getCustomConfig(),
+    getCustomOptions(),
+    getCustomOptionGroups(),
+  ]);
+  return <CustomOrderClient config={config} options={options} groups={groups} />;
 }

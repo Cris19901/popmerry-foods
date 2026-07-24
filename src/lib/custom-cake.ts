@@ -4,8 +4,16 @@ export interface CustomOption {
   id: string;
   group_name: string;
   name: string;
+  description: string | null;
   price_delta: number;
   is_available: boolean;
+  sort_order: number;
+}
+
+export interface CustomOptionGroup {
+  name: string;
+  selection_type: 'single' | 'multi';
+  required: boolean;
   sort_order: number;
 }
 
@@ -39,6 +47,16 @@ export async function getCustomOptions(includeUnavailable = false): Promise<Cust
     if (!includeUnavailable) query = query.eq('is_available', true);
     const { data } = await query;
     return (data as CustomOption[]) ?? [];
+  } catch {
+    return [];
+  }
+}
+
+export async function getCustomOptionGroups(): Promise<CustomOptionGroup[]> {
+  try {
+    const db = getSupabaseAdmin();
+    const { data } = await db.from('custom_option_groups').select('*').order('sort_order');
+    return (data as CustomOptionGroup[]) ?? [];
   } catch {
     return [];
   }

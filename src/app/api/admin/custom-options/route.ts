@@ -6,6 +6,7 @@ import { isAdmin } from '@/lib/admin-auth';
 const createSchema = z.object({
   group_name: z.string().min(1).max(40),
   name: z.string().min(1).max(60),
+  description: z.string().max(120).optional(),
   price_delta: z.number().int().min(0).max(1_000_000).default(0),
   sort_order: z.number().int().min(0).default(0),
 });
