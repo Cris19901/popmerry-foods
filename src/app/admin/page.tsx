@@ -6,18 +6,24 @@ import RevenueChart from './RevenueChart';
 
 async function getStats() {
   const db = getSupabaseAdmin();
-  const [ordersRes, customRes] = await Promise.all([
-    db.from('orders').select('*').order('created_at', { ascending: false }),
+  const [totalRes, recentRes, paidRes, customRes] = await Promise.all([
+    // Cheap count — no row data pulled
+    db.from('orders').select('id', { count: 'exact', head: true }),
+    // Only the 6 orders shown in "Recent Orders"
+    db.from('orders').select('id, customer_name, created_at, status, total').order('created_at', { ascending: false }).limit(6),
+    // Only paid/preparing/delivered orders, and only the columns stats need —
+    // avoids pulling every order (including pending/abandoned) with every column
+    db.from('orders').select('status, total, created_at, items').in('status', ['paid', 'preparing', 'delivered']),
     db.from('custom_order_requests').select('id, name, event_type, created_at, status').order('created_at', { ascending: false }).limit(5),
   ]);
 
-  const orders = ordersRes.data ?? [];
+  const orders = recentRes.data ?? [];
+  const paid = paidRes.data ?? [];
   const customOrders = customRes.data ?? [];
 
-  const paid = orders.filter(o => ['paid', 'preparing', 'delivered'].includes(o.status));
   const totalRevenue = paid.reduce((s, o) => s + o.total, 0);
-  const pendingCount = orders.filter(o => o.status === 'paid').length;
-  const preparingCount = orders.filter(o => o.status === 'preparing').length;
+  const pendingCount = paid.filter(o => o.status === 'paid').length;
+  const preparingCount = paid.filter(o => o.status === 'preparing').length;
 
   // Revenue by day for the last 14 days
   const now = new Date();
@@ -32,9 +38,9 @@ async function getStats() {
     if (day && day in dailyRevenue) dailyRevenue[day] += o.total;
   });
 
-  // Top products by qty sold
+  // Top products by qty sold (paid orders only — matches the revenue figures above)
   const productCounts: Record<string, { name: string; qty: number; revenue: number }> = {};
-  orders.forEach(o => {
+  paid.forEach(o => {
     const items: { product: { id: string; name: string; price: number }; quantity: number }[] = Array.isArray(o.items) ? o.items : [];
     items.forEach(item => {
       const id = item.product?.id;
@@ -46,7 +52,7 @@ async function getStats() {
   });
   const topProducts = Object.values(productCounts).sort((a, b) => b.qty - a.qty).slice(0, 5);
 
-  return { orders: orders.slice(0, 6), customOrders, totalRevenue, pendingCount, preparingCount, totalOrders: orders.length, dailyRevenue, topProducts };
+  return { orders, customOrders, totalRevenue, pendingCount, preparingCount, totalOrders: totalRes.count ?? 0, dailyRevenue, topProducts };
 }
 
 const STATUS_STYLES: Record<string, string> = {
