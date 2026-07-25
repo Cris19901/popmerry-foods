@@ -105,6 +105,7 @@ export default async function AdminCustomOrdersPage() {
                 quoteNote={order.quote_note ?? null}
                 quoteToken={order.quote_token ?? null}
                 depositPaid={!!order.deposit_paid}
+                depositMethod={order.deposit_method ?? null}
               />
 
               {order.special_requirements && (

@@ -52,7 +52,7 @@ export async function POST(req: NextRequest) {
 
     const { error } = await db
       .from('custom_order_requests')
-      .update({ deposit_paid: true, deposit_reference: reference, status: 'deposit_paid' })
+      .update({ deposit_paid: true, deposit_reference: reference, deposit_method: 'paystack', status: 'deposit_paid' })
       .eq('id', quote.id);
 
     if (error) {

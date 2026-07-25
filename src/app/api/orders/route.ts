@@ -27,6 +27,8 @@ const orderSchema = z.object({
   total: z.number().positive(),
   promoCode: z.string().max(50).optional(),
   promoKind: z.enum(['promo', 'referral']).optional(),
+  paymentMethod: z.enum(['paystack', 'transfer']).default('paystack'),
+  transferReference: z.string().max(200).optional(),
 });
 
 export async function POST(req: NextRequest) {
@@ -46,7 +48,7 @@ export async function POST(req: NextRequest) {
       );
     }
 
-    const { customer, items, subtotal, deliveryFee, total, promoCode, promoKind } = parsed.data;
+    const { customer, items, subtotal, deliveryFee, total, promoCode, promoKind, paymentMethod, transferReference } = parsed.data;
     const supabase = getSupabaseAdmin();
 
     const isReferral = promoKind === 'referral';
@@ -67,6 +69,8 @@ export async function POST(req: NextRequest) {
         status: 'pending',
         promo_code: isPromo ? promoCode : null,
         referral_code: isReferral ? promoCode : null,
+        payment_method: paymentMethod,
+        transfer_reference: paymentMethod === 'transfer' ? (transferReference ?? null) : null,
       })
       .select('id')
       .single();

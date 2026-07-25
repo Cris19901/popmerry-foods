@@ -9,6 +9,8 @@ const patchSchema = z.object({
   quoted_price: z.number().int().positive().max(100_000_000).optional(),
   deposit_amount: z.number().int().min(0).max(100_000_000).optional(),
   quote_note: z.string().max(1000).optional(),
+  // Admin manually confirms a bank-transfer deposit — Paystack never sees these
+  mark_deposit_paid: z.boolean().optional(),
 });
 
 export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id: string }> }) {
@@ -19,8 +21,24 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
     return NextResponse.json({ error: 'Invalid request' }, { status: 400 });
   }
 
-  const { status, quoted_price, deposit_amount, quote_note } = parsed.data;
+  const { status, quoted_price, deposit_amount, quote_note, mark_deposit_paid } = parsed.data;
   const db = getSupabaseAdmin();
+
+  // ── Manually confirm a bank-transfer deposit ────────────────────────
+  if (mark_deposit_paid) {
+    const { error } = await db
+      .from('custom_order_requests')
+      .update({
+        deposit_paid: true,
+        deposit_method: 'transfer',
+        deposit_reference: 'Confirmed manually by admin',
+        status: 'deposit_paid',
+      })
+      .eq('id', id);
+
+    if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+    return NextResponse.json({ ok: true });
+  }
 
   // ── Issue / update a quote ──────────────────────────────────────────
   if (quoted_price !== undefined) {

@@ -2,7 +2,7 @@
 
 import { useState } from 'react';
 import { useRouter } from 'next/navigation';
-import { Receipt, Copy, CheckCircle, Clock, Pencil } from 'lucide-react';
+import { Receipt, Copy, CheckCircle, Clock, Pencil, Banknote } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { formatPrice } from '@/lib/products-data';
 import { SITE_URL } from '@/lib/constants';
@@ -17,17 +17,19 @@ interface Props {
   quoteNote: string | null;
   quoteToken: string | null;
   depositPaid: boolean;
+  depositMethod: 'paystack' | 'transfer' | null;
 }
 
 const inputCls = 'w-full border border-stone-200 rounded-xl px-3 py-2 text-sm text-stone-800 focus:outline-none focus:border-amber-500 focus:ring-1 focus:ring-amber-500';
 
 export default function QuoteForm({
   orderId, customerName, customerPhone, estimatedPrice,
-  quotedPrice, depositAmount, quoteNote, quoteToken, depositPaid,
+  quotedPrice, depositAmount, quoteNote, quoteToken, depositPaid, depositMethod,
 }: Props) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [saving, setSaving] = useState(false);
+  const [confirming, setConfirming] = useState(false);
   const [copied, setCopied] = useState(false);
   const [price, setPrice] = useState(String(quotedPrice ?? estimatedPrice ?? ''));
   const [deposit, setDeposit] = useState(String(depositAmount ?? ''));
@@ -35,6 +37,28 @@ export default function QuoteForm({
   const [token, setToken] = useState(quoteToken);
 
   const quoteUrl = token ? `${SITE_URL}/quote/${token}` : '';
+
+  const confirmTransfer = async () => {
+    if (!confirm(`Confirm you've received the ${formatPrice(depositAmount ?? 0)} deposit by bank transfer for ${customerName}?`)) return;
+    setConfirming(true);
+    try {
+      const res = await fetch(`/api/admin/custom-orders/${orderId}`, {
+        method: 'PATCH',
+        headers: { 'Content-Type': 'application/json' },
+        body: JSON.stringify({ mark_deposit_paid: true }),
+      });
+      if (res.ok) {
+        toast.success('Deposit marked as received');
+        router.refresh();
+      } else {
+        toast.error('Could not update. Try again.');
+      }
+    } catch {
+      toast.error('Could not update. Try again.');
+    } finally {
+      setConfirming(false);
+    }
+  };
 
   const save = async () => {
     const p = parseInt(price, 10);
@@ -95,7 +119,9 @@ export default function QuoteForm({
           <span className={`inline-flex items-center gap-1 text-[11px] font-bold px-2.5 py-1 rounded-full whitespace-nowrap ${
             depositPaid ? 'bg-green-600 text-white' : 'bg-blue-100 text-blue-700'
           }`}>
-            {depositPaid ? <><CheckCircle size={12} /> Deposit paid</> : <><Clock size={12} /> Awaiting deposit</>}
+            {depositPaid
+              ? <><CheckCircle size={12} /> Paid {depositMethod === 'transfer' ? '· transfer' : depositMethod === 'paystack' ? '· card' : ''}</>
+              : <><Clock size={12} /> Awaiting deposit</>}
           </span>
         </div>
 
@@ -121,6 +147,16 @@ export default function QuoteForm({
           >
             <Pencil size={13} /> Edit
           </button>
+          {!depositPaid && (
+            <button
+              onClick={confirmTransfer}
+              disabled={confirming}
+              className="inline-flex items-center gap-1.5 border border-teal-300 text-teal-700 hover:bg-teal-50 text-xs font-semibold px-3 py-1.5 rounded-full transition-colors disabled:opacity-60"
+              title="Use this once you've confirmed the customer's bank transfer landed"
+            >
+              <Banknote size={13} /> {confirming ? 'Confirming…' : 'Mark transfer received'}
+            </button>
+          )}
         </div>
       </div>
     );

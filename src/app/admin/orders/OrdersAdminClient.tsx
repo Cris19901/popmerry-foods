@@ -1,7 +1,7 @@
 'use client';
 
 import { useState, useMemo } from 'react';
-import { Search, X, Download } from 'lucide-react';
+import { Search, X, Download, Banknote, CreditCard } from 'lucide-react';
 import { formatPrice } from '@/lib/products-data';
 import OrderStatusSelect from './OrderStatusSelect';
 
@@ -16,9 +16,23 @@ type Order = {
   delivery_fee: number;
   total: number;
   status: string;
+  payment_method: 'paystack' | 'transfer' | null;
   paystack_reference: string | null;
+  transfer_reference: string | null;
   created_at: string;
 };
+
+function PaymentBadge({ order }: { order: Order }) {
+  const isTransfer = order.payment_method === 'transfer';
+  return (
+    <span className={`inline-flex items-center gap-1 text-[11px] font-semibold px-2 py-0.5 rounded-full whitespace-nowrap ${
+      isTransfer ? 'bg-teal-50 text-teal-700' : 'bg-purple-50 text-purple-700'
+    }`}>
+      {isTransfer ? <Banknote size={11} /> : <CreditCard size={11} />}
+      {isTransfer ? 'Bank Transfer' : 'Card / Paystack'}
+    </span>
+  );
+}
 
 const STATUS_STYLES: Record<string, string> = {
   pending:   'bg-stone-100 text-stone-600',
@@ -44,7 +58,7 @@ function waLink(phone: string, name: string, orderId: string, status: string) {
 }
 
 function exportCSV(orders: Order[]) {
-  const headers = ['Order ID', 'Date', 'Customer', 'Email', 'Phone', 'Address', 'Items', 'Subtotal', 'Delivery Fee', 'Total', 'Status', 'Paystack Ref'];
+  const headers = ['Order ID', 'Date', 'Customer', 'Email', 'Phone', 'Address', 'Items', 'Subtotal', 'Delivery Fee', 'Total', 'Status', 'Payment Method', 'Paystack Ref', 'Transfer Ref'];
   const rows = orders.map(o => [
     o.id,
     new Date(o.created_at).toLocaleDateString('en-NG'),
@@ -57,7 +71,9 @@ function exportCSV(orders: Order[]) {
     o.delivery_fee,
     o.total,
     o.status,
+    o.payment_method ?? 'paystack',
     o.paystack_reference ?? '',
+    o.transfer_reference ?? '',
   ]);
 
   const csv = [headers, ...rows].map(r => r.map(v => `"${String(v).replace(/"/g, '""')}"`).join(',')).join('\n');
@@ -176,8 +192,14 @@ export default function OrdersAdminClient({ orders }: { orders: Order[] }) {
                         {new Date(order.created_at).toLocaleDateString('en-NG', { day: 'numeric', month: 'short', year: 'numeric' })}
                       </span>
                     </div>
-                    {order.paystack_reference && (
-                      <p className="text-stone-300 text-xs font-mono mt-1">{order.paystack_reference}</p>
+                    <div className="flex items-center justify-between mt-1.5">
+                      <PaymentBadge order={order} />
+                      {order.paystack_reference && (
+                        <p className="text-stone-300 text-xs font-mono">{order.paystack_reference}</p>
+                      )}
+                    </div>
+                    {order.transfer_reference && (
+                      <p className="text-teal-600 text-xs mt-1">Ref: {order.transfer_reference}</p>
                     )}
                     <a
                       href={waLink(order.customer_phone, order.customer_name, order.id, order.status)}
@@ -196,7 +218,7 @@ export default function OrdersAdminClient({ orders }: { orders: Order[] }) {
               <table className="w-full text-sm">
                 <thead className="bg-stone-50 border-b border-stone-200">
                   <tr>
-                    {['Customer', 'Date', 'Items', 'Total', 'Reference', 'Status', ''].map(h => (
+                    {['Customer', 'Date', 'Items', 'Total', 'Payment', 'Status', ''].map(h => (
                       <th key={h} className="text-left px-5 py-3 text-xs font-semibold text-stone-500 uppercase tracking-wider">{h}</th>
                     ))}
                   </tr>
@@ -223,7 +245,15 @@ export default function OrdersAdminClient({ orders }: { orders: Order[] }) {
                           </div>
                         </td>
                         <td className="px-5 py-4 font-semibold text-stone-900">{formatPrice(order.total)}</td>
-                        <td className="px-5 py-4 text-stone-400 text-xs font-mono">{order.paystack_reference ?? '—'}</td>
+                        <td className="px-5 py-4">
+                          <PaymentBadge order={order} />
+                          {order.paystack_reference && (
+                            <p className="text-stone-400 text-xs font-mono mt-1">{order.paystack_reference}</p>
+                          )}
+                          {order.transfer_reference && (
+                            <p className="text-teal-600 text-xs mt-1">Ref: {order.transfer_reference}</p>
+                          )}
+                        </td>
                         <td className="px-5 py-4">
                           <OrderStatusSelect orderId={order.id} currentStatus={order.status} />
                         </td>

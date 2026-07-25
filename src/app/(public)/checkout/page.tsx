@@ -107,7 +107,12 @@ export default function CheckoutPage() {
     const res = await fetch('/api/orders', {
       method: 'POST',
       headers: { 'Content-Type': 'application/json' },
-      body: JSON.stringify({ customer: form, items, subtotal, deliveryFee, discount, total, promoCode: promo?.code, promoKind: promo?.kind }),
+      body: JSON.stringify({
+        customer: form, items, subtotal, deliveryFee, discount, total,
+        promoCode: promo?.code, promoKind: promo?.kind,
+        paymentMethod: payMethod,
+        transferReference: payMethod === 'transfer' ? (transferRef || undefined) : undefined,
+      }),
     });
     const data = await res.json();
     if (!res.ok) throw new Error('Failed to create order');
