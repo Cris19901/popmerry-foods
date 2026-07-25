@@ -6,7 +6,7 @@ import { Plus } from 'lucide-react';
 import toast from 'react-hot-toast';
 import { Product } from '@/types';
 import { useCartStore } from '@/lib/cart-store';
-import { formatPrice } from '@/lib/products-data';
+import { formatPrice, productImageUrl } from '@/lib/products-data';
 
 interface Props {
   product: Product;
@@ -22,7 +22,7 @@ export default function ProductCard({ product }: Props) {
     toast.success(`${product.name} added to cart!`);
   };
 
-  const imageUrl = `https://images.unsplash.com/photo-${product.imageId}?auto=format&fit=crop&w=400&h=300&q=80`;
+  const imageUrl = productImageUrl(product.imageId, 'auto=format&fit=crop&w=400&h=300&q=80');
 
   return (
     <div className="group bg-white rounded-3xl overflow-hidden shadow-sm border border-amber-100 card-hover flex flex-col">

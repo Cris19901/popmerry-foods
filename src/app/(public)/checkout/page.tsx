@@ -8,7 +8,7 @@ import Image from 'next/image';
 import toast from 'react-hot-toast';
 import Script from 'next/script';
 import { useCartStore } from '@/lib/cart-store';
-import { formatPrice } from '@/lib/products-data';
+import { formatPrice, productImageUrl } from '@/lib/products-data';
 import { calcDeliveryFee, FREE_DELIVERY_THRESHOLD, waLink } from '@/lib/constants';
 import { CustomerDetails } from '@/types';
 
@@ -285,7 +285,7 @@ export default function CheckoutPage() {
                       >
                         {item.product.imageId && (
                           <Image
-                            src={`https://images.unsplash.com/photo-${item.product.imageId}?auto=format&fit=crop&w=40&h=40&q=80`}
+                            src={productImageUrl(item.product.imageId, 'auto=format&fit=crop&w=40&h=40&q=80')}
                             alt={item.product.name}
                             fill
                             className="object-cover"

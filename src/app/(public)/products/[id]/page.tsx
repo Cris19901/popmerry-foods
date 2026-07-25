@@ -3,6 +3,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { ArrowLeft, Sparkles, Clock, Package } from 'lucide-react';
 import { getProducts, getProduct, formatPrice } from '@/lib/products-db';
+import { productImageUrl } from '@/lib/products-data';
 import { FREE_DELIVERY_THRESHOLD } from '@/lib/constants';
 import AddToCartButton from './AddToCartButton';
 import WaitlistButton from './WaitlistButton';
@@ -25,7 +26,7 @@ export async function generateMetadata({ params }: Props) {
   const description = product.description;
   const canonicalUrl = `https://popmerryfoods.com.ng/products/${id}`;
   const imageUrl = product.imageId
-    ? `https://images.unsplash.com/photo-${product.imageId}?auto=format&fit=crop&w=1200&h=630&q=80`
+    ? productImageUrl(product.imageId, 'auto=format&fit=crop&w=1200&h=630&q=80')
     : 'https://popmerryfoods.com.ng/og-default.jpg';
 
   return {
@@ -58,7 +59,7 @@ export default async function ProductDetailPage({ params }: Props) {
     .filter(p => p.category === product.category && p.id !== product.id)
     .slice(0, 3);
 
-  const imageUrl = `https://images.unsplash.com/photo-${product.imageId}?auto=format&fit=crop&w=1200&h=700&q=85`;
+  const imageUrl = productImageUrl(product.imageId, 'auto=format&fit=crop&w=1200&h=700&q=85');
 
   const categoryLabel =
     product.category === 'banana-cake' ? 'Banana Cakes'
@@ -226,7 +227,7 @@ export default async function ProductDetailPage({ params }: Props) {
                   >
                     {rel.imageId && (
                       <Image
-                        src={`https://images.unsplash.com/photo-${rel.imageId}?auto=format&fit=crop&w=400&h=200&q=75`}
+                        src={productImageUrl(rel.imageId, 'auto=format&fit=crop&w=400&h=200&q=75')}
                         alt={rel.name}
                         fill
                         className="object-cover group-hover:scale-105 transition-transform duration-500"

@@ -1,9 +1,11 @@
 'use client';
 
-import { useState } from 'react';
+import { useState, useRef } from 'react';
 import { useRouter } from 'next/navigation';
-import { X } from 'lucide-react';
+import Image from 'next/image';
+import { X, Upload } from 'lucide-react';
 import toast from 'react-hot-toast';
+import { productImageUrl } from '@/lib/products-data';
 import type { Product } from '@/types';
 
 interface Props {
@@ -35,9 +37,32 @@ export default function ProductFormModal({ product, onClose }: Props) {
     isAvailable: product?.isAvailable ?? true,
   });
   const [saving, setSaving] = useState(false);
+  const [uploading, setUploading] = useState(false);
+  const fileRef = useRef<HTMLInputElement>(null);
 
   const set = (key: string, value: string | boolean) =>
     setForm(f => ({ ...f, [key]: value }));
+
+  const handleUpload = async (file: File) => {
+    setUploading(true);
+    const fd = new FormData();
+    fd.append('file', file);
+    try {
+      const res = await fetch('/api/admin/products/upload', { method: 'POST', body: fd });
+      const data = await res.json();
+      if (res.ok) {
+        set('imageId', data.url);
+        toast.success('Photo uploaded');
+      } else {
+        toast.error(data.error ?? 'Upload failed');
+      }
+    } catch {
+      toast.error('Upload failed. Please try again.');
+    } finally {
+      setUploading(false);
+      if (fileRef.current) fileRef.current.value = '';
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -140,12 +165,43 @@ export default function ProductFormModal({ product, onClose }: Props) {
             </Field>
           </div>
 
-          <Field label="Unsplash Image ID" hint="e.g. 1569762404472-026308ba6b64">
+          <Field label="Product Photo">
+            <div className="flex items-center gap-3">
+              {form.imageId && (
+                <div className="relative w-16 h-16 rounded-xl overflow-hidden border border-stone-200 flex-shrink-0">
+                  <Image
+                    src={productImageUrl(form.imageId, 'auto=format&fit=crop&w=64&h=64&q=70')}
+                    alt="Preview"
+                    fill
+                    className="object-cover"
+                    sizes="64px"
+                  />
+                </div>
+              )}
+              <div className="flex-1">
+                <input
+                  ref={fileRef}
+                  type="file"
+                  accept="image/*"
+                  onChange={e => { const f = e.target.files?.[0]; if (f) handleUpload(f); }}
+                  className="hidden"
+                />
+                <button
+                  type="button"
+                  onClick={() => fileRef.current?.click()}
+                  disabled={uploading}
+                  className="inline-flex items-center gap-2 border border-stone-200 hover:border-amber-400 text-stone-700 text-sm font-semibold px-4 py-2.5 rounded-xl transition-colors disabled:opacity-60"
+                >
+                  <Upload size={14} /> {uploading ? 'Uploading…' : form.imageId ? 'Change Photo' : 'Upload Photo'}
+                </button>
+                <p className="text-xs text-stone-400 mt-1.5">JPG, PNG, WebP or GIF · max 5MB</p>
+              </div>
+            </div>
             <input
               value={form.imageId}
               onChange={e => set('imageId', e.target.value)}
-              placeholder="1569762404472-026308ba6b64"
-              className={inputCls}
+              placeholder="Or paste an Unsplash photo ID / image URL"
+              className={`${inputCls} mt-3`}
             />
           </Field>
 

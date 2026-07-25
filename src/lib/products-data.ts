@@ -240,3 +240,14 @@ export const featuredProducts = products.filter(p =>
 
 export const formatPrice = (price: number) =>
   new Intl.NumberFormat('en-NG', { style: 'currency', currency: 'NGN', minimumFractionDigits: 0 }).format(price);
+
+/**
+ * Resolves a product's imageId to a displayable URL.
+ * Uploaded product photos store a full Supabase Storage URL directly;
+ * older seeded products store a bare Unsplash photo ID, which is
+ * expanded against the Unsplash CDN with the given size/quality params.
+ */
+export function productImageUrl(imageId: string, unsplashParams: string): string {
+  if (imageId.startsWith('http://') || imageId.startsWith('https://')) return imageId;
+  return `https://images.unsplash.com/photo-${imageId}?${unsplashParams}`;
+}

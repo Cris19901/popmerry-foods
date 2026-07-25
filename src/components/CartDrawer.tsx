@@ -5,7 +5,7 @@ import Link from 'next/link';
 import Image from 'next/image';
 import { X, Minus, Plus, Trash2, ShoppingBag } from 'lucide-react';
 import { useCartStore } from '@/lib/cart-store';
-import { formatPrice } from '@/lib/products-data';
+import { formatPrice, productImageUrl } from '@/lib/products-data';
 import { DELIVERY_FEE, FREE_DELIVERY_THRESHOLD, calcDeliveryFee } from '@/lib/constants';
 
 export default function CartDrawer() {
@@ -85,7 +85,7 @@ export default function CartDrawer() {
                 >
                   {item.product.imageId && (
                     <Image
-                      src={`https://images.unsplash.com/photo-${item.product.imageId}?auto=format&fit=crop&w=56&h=56&q=80`}
+                      src={productImageUrl(item.product.imageId, 'auto=format&fit=crop&w=56&h=56&q=80')}
                       alt={item.product.name}
                       fill
                       className="object-cover"

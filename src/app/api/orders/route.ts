@@ -4,11 +4,13 @@ import { getSupabaseAdmin } from '@/lib/supabase';
 import { rateLimit } from '@/lib/rate-limit';
 
 const orderItemSchema = z.object({
-  id: z.string().min(1),
-  name: z.string().min(1),
-  price: z.number().positive(),
+  product: z.object({
+    id: z.string().min(1),
+    name: z.string().min(1),
+    price: z.number().positive(),
+    imageId: z.string().optional(),
+  }),
   quantity: z.number().int().positive().max(100),
-  imageId: z.string().optional(),
 });
 
 const orderSchema = z.object({

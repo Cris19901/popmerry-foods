@@ -7,7 +7,7 @@ import { Plus, Pencil, Trash2, Database } from 'lucide-react';
 import toast from 'react-hot-toast';
 import ProductFormModal from './ProductFormModal';
 import AvailabilityToggle from './AvailabilityToggle';
-import { formatPrice } from '@/lib/products-data';
+import { formatPrice, productImageUrl } from '@/lib/products-data';
 import type { Product } from '@/types';
 
 interface Props {
@@ -123,7 +123,7 @@ export default function ProductsAdminClient({ products, dbReady }: Props) {
               >
                 {product.imageId && (
                   <Image
-                    src={`https://images.unsplash.com/photo-${product.imageId}?auto=format&fit=crop&w=48&h=48&q=70`}
+                    src={productImageUrl(product.imageId, 'auto=format&fit=crop&w=48&h=48&q=70')}
                     alt={product.name}
                     fill
                     className="object-cover"
@@ -189,7 +189,7 @@ export default function ProductsAdminClient({ products, dbReady }: Props) {
                     >
                       {product.imageId && (
                         <Image
-                          src={`https://images.unsplash.com/photo-${product.imageId}?auto=format&fit=crop&w=40&h=40&q=70`}
+                          src={productImageUrl(product.imageId, 'auto=format&fit=crop&w=40&h=40&q=70')}
                           alt={product.name}
                           fill
                           className="object-cover"
