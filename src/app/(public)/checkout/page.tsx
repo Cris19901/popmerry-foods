@@ -122,6 +122,10 @@ export default function CheckoutPage() {
 
   const handlePay = async () => {
     if (!validate()) return;
+    if (!window.PaystackPop) {
+      toast.error('Payment is still loading — please try again in a moment.');
+      return;
+    }
     setLoading(true);
     try {
       const orderId = await createOrder();

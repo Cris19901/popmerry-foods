@@ -7,6 +7,8 @@ import NewsletterForm from '@/components/NewsletterForm';
 import { getProducts } from '@/lib/products-db';
 import { WHATSAPP_NUMBER } from '@/lib/constants';
 
+export const dynamic = 'force-dynamic';
+
 const FEATURED_IDS = ['bc-classic', 'cr-butter', 'pc-classic', 'bn-morning'];
 
 const localBusinessSchema = {

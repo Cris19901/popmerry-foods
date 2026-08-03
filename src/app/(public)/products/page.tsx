@@ -2,6 +2,8 @@ import { Suspense } from 'react';
 import { getProducts } from '@/lib/products-db';
 import ProductsClient from './ProductsClient';
 
+export const dynamic = 'force-dynamic';
+
 function ProductsSkeleton() {
   return (
     <div className="animate-pulse">

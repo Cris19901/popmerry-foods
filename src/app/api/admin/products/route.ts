@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '@/lib/supabase';
 import { products as staticProducts } from '@/lib/products-data';
@@ -8,7 +9,7 @@ const createSchema = z.object({
   name: z.string().min(1).max(200),
   description: z.string().max(1000).default(''),
   price: z.number().int().positive(),
-  category: z.enum(['banana-cake', 'croissant', 'bundle']),
+  category: z.enum(['banana-cake', 'croissant', 'bundle', 'popcorn']),
   imageId: z.string().default(''),
   tag: z.string().max(50).optional(),
   isAvailable: z.boolean().default(true),
@@ -37,6 +38,11 @@ export async function POST(req: NextRequest) {
 
     const { error } = await db.from('products').upsert(rows, { onConflict: 'id' });
     if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+    revalidatePath('/products');
+    revalidatePath('/');
+    revalidatePath('/admin/products');
+
     return NextResponse.json({ ok: true, seeded: rows.length });
   }
 
@@ -64,5 +70,10 @@ export async function POST(req: NextRequest) {
   });
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  revalidatePath('/products');
+  revalidatePath('/');
+  revalidatePath('/admin/products');
+
   return NextResponse.json({ ok: true });
 }

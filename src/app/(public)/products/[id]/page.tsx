@@ -8,6 +8,8 @@ import { FREE_DELIVERY_THRESHOLD } from '@/lib/constants';
 import AddToCartButton from './AddToCartButton';
 import WaitlistButton from './WaitlistButton';
 
+export const dynamic = 'force-dynamic';
+
 interface Props {
   params: Promise<{ id: string }>;
 }

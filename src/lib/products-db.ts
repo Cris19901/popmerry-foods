@@ -28,9 +28,14 @@ export async function getProducts(): Promise<Product[]> {
       .select('*')
       .order('created_at', { ascending: true });
 
-    if (error || !data || data.length === 0) return staticProducts;
+    if (error) {
+      console.error('getProducts DB error:', error.message);
+      return staticProducts;
+    }
+    if (!data || data.length === 0) return staticProducts;
     return data.map(rowToProduct);
-  } catch {
+  } catch (err) {
+    console.error('getProducts exception:', err);
     return staticProducts;
   }
 }
@@ -40,10 +45,12 @@ export async function getProduct(id: string): Promise<Product | null> {
     const db = getSupabaseAdmin();
     const { data, error } = await db.from('products').select('*').eq('id', id).single();
     if (error || !data) {
+      if (error) console.error(`getProduct DB error for id ${id}:`, error.message);
       return staticProducts.find(p => p.id === id) ?? null;
     }
     return rowToProduct(data);
-  } catch {
+  } catch (err) {
+    console.error(`getProduct exception for id ${id}:`, err);
     return staticProducts.find(p => p.id === id) ?? null;
   }
 }

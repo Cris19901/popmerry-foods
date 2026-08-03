@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
+import { revalidatePath } from 'next/cache';
 import { z } from 'zod';
 import { getSupabaseAdmin } from '@/lib/supabase';
 
@@ -6,7 +7,7 @@ const patchSchema = z.object({
   name: z.string().min(1).max(200).optional(),
   description: z.string().max(1000).optional(),
   price: z.number().int().positive().optional(),
-  category: z.enum(['banana-cake', 'croissant', 'bundle']).optional(),
+  category: z.enum(['banana-cake', 'croissant', 'bundle', 'popcorn']).optional(),
   imageId: z.string().optional(),
   tag: z.string().max(50).nullable().optional(),
   isAvailable: z.boolean().optional(),
@@ -39,6 +40,12 @@ export async function PATCH(req: NextRequest, { params }: { params: Promise<{ id
   const { error } = await db.from('products').update(updates).eq('id', id);
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  revalidatePath('/products');
+  revalidatePath(`/products/${id}`);
+  revalidatePath('/');
+  revalidatePath('/admin/products');
+
   return NextResponse.json({ ok: true });
 }
 
@@ -47,5 +54,11 @@ export async function DELETE(_req: NextRequest, { params }: { params: Promise<{ 
   const db = getSupabaseAdmin();
   const { error } = await db.from('products').delete().eq('id', id);
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  revalidatePath('/products');
+  revalidatePath(`/products/${id}`);
+  revalidatePath('/');
+  revalidatePath('/admin/products');
+
   return NextResponse.json({ ok: true });
 }
