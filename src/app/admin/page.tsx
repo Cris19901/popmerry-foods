@@ -6,24 +6,28 @@ import RevenueChart from './RevenueChart';
 
 async function getStats() {
   const db = getSupabaseAdmin();
-  const [totalRes, recentRes, paidRes, customRes] = await Promise.all([
+  const thirtyDaysAgo = new Date(Date.now() - 30 * 24 * 60 * 60 * 1000).toISOString();
+
+  const [totalRes, recentRes, totalRevenueRes, recentPaidRes, customRes] = await Promise.all([
     // Cheap count — no row data pulled
     db.from('orders').select('id', { count: 'exact', head: true }),
     // Only the 6 orders shown in "Recent Orders"
     db.from('orders').select('id, customer_name, created_at, status, total').order('created_at', { ascending: false }).limit(6),
-    // Only paid/preparing/delivered orders, and only the columns stats need —
-    // avoids pulling every order (including pending/abandoned) with every column
-    db.from('orders').select('status, total, created_at, items').in('status', ['paid', 'preparing', 'delivered']),
+    // Light query: only status & total for overall revenue and status counts (no heavy items JSON)
+    db.from('orders').select('status, total').in('status', ['paid', 'preparing', 'delivered']),
+    // Only fetch items for orders from last 30 days for revenue chart & top products
+    db.from('orders').select('status, total, created_at, items').in('status', ['paid', 'preparing', 'delivered']).gte('created_at', thirtyDaysAgo),
     db.from('custom_order_requests').select('id, name, event_type, created_at, status').order('created_at', { ascending: false }).limit(5),
   ]);
 
   const orders = recentRes.data ?? [];
-  const paid = paidRes.data ?? [];
+  const allPaid = totalRevenueRes.data ?? [];
+  const recentPaid = recentPaidRes.data ?? [];
   const customOrders = customRes.data ?? [];
 
-  const totalRevenue = paid.reduce((s, o) => s + o.total, 0);
-  const pendingCount = paid.filter(o => o.status === 'paid').length;
-  const preparingCount = paid.filter(o => o.status === 'preparing').length;
+  const totalRevenue = allPaid.reduce((s, o) => s + o.total, 0);
+  const pendingCount = allPaid.filter(o => o.status === 'paid').length;
+  const preparingCount = allPaid.filter(o => o.status === 'preparing').length;
 
   // Revenue by day for the last 14 days
   const now = new Date();
@@ -33,14 +37,14 @@ async function getStats() {
     d.setDate(d.getDate() - i);
     dailyRevenue[d.toISOString().slice(0, 10)] = 0;
   }
-  paid.forEach(o => {
+  recentPaid.forEach(o => {
     const day = o.created_at?.slice(0, 10);
     if (day && day in dailyRevenue) dailyRevenue[day] += o.total;
   });
 
-  // Top products by qty sold (paid orders only — matches the revenue figures above)
+  // Top products by qty sold (recent paid orders)
   const productCounts: Record<string, { name: string; qty: number; revenue: number }> = {};
-  paid.forEach(o => {
+  recentPaid.forEach(o => {
     const items: { product: { id: string; name: string; price: number }; quantity: number }[] = Array.isArray(o.items) ? o.items : [];
     items.forEach(item => {
       const id = item.product?.id;
